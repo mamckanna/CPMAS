@@ -1,0 +1,12 @@
+MAS Session Resume Prompt
+
+Resume MAS protocol-driven, gap-focused, line-by-line analysis of every file in the system, as previously instructed. Continue from the last fully analyzed file. For each file:
+
+Analyze every line for protocol compliance, MAS-native automation, portability, canonical output/state, agent orchestration, dynamic field population, append-only state/logs, file/hook/template presence, protocol source-of-truth, error/backup/compaction/handoff logic, and any missing, stubbed, or simulated logic.
+Explicitly call out every gap, missing feature, deviation, or incomplete implementation.
+Do not summarize or skip—continue until every file in the system is fully analyzed and all gaps are documented.
+If interrupted, use this prompt to resume from the last completed file, ensuring no step or requirement is missed.
+
+You can paste this at the start of a new session to pick up the MAS analysis and protocol compliance work exactly where you left off.
+
+GPT-4.1 • 0x
