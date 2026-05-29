@@ -1,0 +1,21 @@
+# Multi-Agent-System repo
+# Stage-1 validation baseline. See Libraries/core/validation-and-recovery.md.
+
+# Archived prior-version artifacts (kept on disk, not tracked)
+.archive/v1-bak/
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editor / IDE local-only state
+.vscode/*.local.json
+*.code-workspace.local
+
+# Transient files
+*.swp
+*.tmp
+*.bak
+*# Ignore test output and temp files
+/tests/hooks/test-stress-tmp/

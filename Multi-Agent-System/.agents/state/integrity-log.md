@@ -1,0 +1,873 @@
+<!--
+integrity-log.md — append-only log of /health-check persistence-integrity scans (checks 7-11).
+Owner: /health-check prompt. Spec: Libraries/core/validation-and-recovery.md.
+-->
+
+# Integrity Log
+
+This file is append-only. See [Libraries/core/validation-and-recovery.md](../../Libraries/core/validation-and-recovery.md) and [template/.agents/state/integrity-log.template.md](../../template/.agents/state/integrity-log.template.md) for the entry schema and hard rules.
+
+## IL-001: Stage-1 baseline scan
+
+- Date: 2026-05-26T00:00:00Z
+- Trigger: kickoff (dogfood of Stage-1 design on the template-development workspace)
+- git_head: bd0bbed78de5e18c19a4761b833dde16fdd426bf
+- files_scanned: 121
+- sha256_baseline: e32d17170a413e397c8a50bfaee8dd759d91a6e1cb5eae94824bec31119c650c
+- Check 7  (git fsck):       pass — empty output from `git fsck --full --strict`
+- Check 8  (hash readback):  baseline — no prior IL to compare against; manifest established below; next scan re-derives and compares
+- Check 9  (cross-ref):      pass — 55 library ids registered under `Libraries/`; 0 orphan `ref:`/`refs:` citations found in non-Libraries .md. The current meta-template repo uses inline markdown links rather than the `ref:` YAML form, so the citation count is 0; this is recorded for transparency, not as a warn.
+- Check 10 (encoding audit): pass — BOM=0, ESC=0 across 119 .md files (excluding `.archive/` and `.git/`)
+- Check 11 (remote sync):    n/a — `integrity.trust_domain.remote_git=none` on this meta-template repo. The template defaults set `local-bare` for downstream projects; this repo itself has no remote configured yet.
+- Verdict: healthy
+- Notes: First IL entry. Dogfood of Stage-1 design on the template-development workspace itself. This repo is not a project using the template, so `.agents/state/` contains only this integrity log; the other state files (`checkpoint.md`, `plan.md`, etc.) are present in `template/.agents/state/` as `.template.md` definitions. Scan scope: every file under repo root excluding `.git/` and `.archive/`. Working tree clean at commit `bd0bbed` (post C.2.1: 37 MS Library entries + Stage-1 validation scaffolding committed). On-disk casing for the template directory is `Template/` (capital T); Windows case-insensitivity means edits via `template/` resolve to the same files. Future scans should treat the canonical case as `Template/` per this manifest.
+- turn_token: 1
+
+### IL-001 hash manifest
+
+````
+2ad9a99a058d1e9e5a9c9d72668b5089be1a6f9113561657d687567e3e5ca0fe  .gitignore
+5fe8e3913d8138c23cd5b60adef2da71be7d46e4bf64a3779d03c7bfd64fe96e  Design/SYSTEM-DESIGN.md
+ad5c5673be95ebdb9cd63f90197d48f93128ebcc9c59fb0ecc0d5c238c6fc136  Libraries/_prior-art/agents-md.md
+30904959aa006f71263fe3da6911f86eb4c3b153d4d6ec6d71da7be05bcd66eb  Libraries/_prior-art/anthropic-patterns.md
+c7ce5f9f25df8f26135b842b1119893959b9dc62d30df610ee61d2bda3ad982b  Libraries/_prior-art/bmad-method.md
+1f7c888ec3345b15f6d1257a5c9846ef541f1ca67e669c01111fff8a151a2074  Libraries/_prior-art/compound-engineering.md
+c88ed07e41cfec1cf47bb46fefb7464e73c570b06868cbe779a12d77e5b365eb  Libraries/_prior-art/frameworks-survey.md
+604ca14944964e306ff99a91bd0c36454a98215bd22a3afa2f8cbc895e788870  Libraries/_prior-art/mcp.md
+779a1f16bba7d7b037e0c727659d2f8af95f9644cc0e6bef2d3425344357da44  Libraries/_prior-art/README.md
+a109a56550cefc9cade3523b5c9dbfa0e20a0cc273ed7bf189e5aeafddb0e159  Libraries/_prior-art/spec-kit.md
+9c70d1c643df72599727ec7d07830ae5a0c3f2bdb6ebfff6d5a2f84bf72d3346  Libraries/_prior-art/vscode-customization.md
+d6029395c33098cc3623d5c7c193b1b9ef3dff2a8c41bb12ef679d7083fd2729  Libraries/_schema/conventions.md
+a06130db7be149e133e8b0800964dfc990b60dce5cffdfa945c17a18329c5e25  Libraries/_schema/entry-schema.md
+ee9d8a8b370504c11ca415b0a5116f4756f5dfd2d4fc35913283aa2116901135  Libraries/core/agents-md.md
+20c328434cd7adbcb8efb714c109b6c7d7eab58eb0f068e25941c698e746b309  Libraries/core/compaction-and-recovery.md
+411fa44753082da3a6090b3e6da1179d4f0117e0a110162b2ba231a044e7fe5a  Libraries/core/mcp.md
+aab4322e58385a48835c7b6aa5128f0b7c6d7c756463481c28089f094b785803  Libraries/core/multi-agent-patterns.md
+f76359022615586485294b653b7c12a884fe3440fc8d53faad8fc81f8b958256  Libraries/core/state-and-handoffs.md
+31adc21c5c6111540e2869c7408ec1d79101881214ffa53db9841289c2071f09  Libraries/core/validation-and-recovery.md
+d0ff3e2014c5cb19fd373fe9172a4efa18d760385986a13f268c05f64af4af9f  Libraries/core/vscode-chat-modes.md
+ce981626566c3fa6534cd0ec94bfc6bdfea6aca071f50b473f997cf0beb679a6  Libraries/frameworks/anthropic-subagents.md
+84716b3fcc8892e0b57e874245be5b6ccd6e88910d0673afb412677513373df5  Libraries/frameworks/autogen.md
+612407c438c429c7bf6f39798caceffc968580b566bbc2889185963e0455a784  Libraries/frameworks/crewai.md
+3fe509533c01a764a5684b789a966697a73b92524bafe87c00318dbf05171c09  Libraries/frameworks/langgraph.md
+8dd56ac23da58be1dd49e9fb74bac49f544d2d3e43e1871e1eaaf9261cd0c4d3  Libraries/frameworks/microsoft-agent-framework.md
+4c4c756025c0269fef35e80d55c047fe8c270fc7a501f144697faadf962a5dcc  Libraries/frameworks/openai-agents-sdk.md
+cf13c7aabf5e5a68e113edf5b0cf7c3a668b225d604f52d0075ec90e31e253d5  Libraries/frameworks/semantic-kernel.md
+65b9442367d745faaf1d8a5aa550195b4a4f07354819cf1ef71af9d37a9eadbf  Libraries/governance/nist-ai-rmf.md
+70edc5b97ee789dc6ffe8f5f80a5e474f195f511c77f0b8e0ee9b34a8b7501a2  Libraries/governance/owasp-llm-top10.md
+ee6fd7f20cfaecf62be9e2cadf14ded84850632bdf26792ea2b73792ee7bc120  Libraries/governance/prompt-injection-defenses.md
+b1b9eb0ced8d1d760ef40df997cd8969e74740dfc36cf367aea9765073844982  Libraries/governance/responsible-ai-principles.md
+4bc95e03036090e8a275a7b144c1123839cbfae75467014d1c1bc110f66c0da2  Libraries/microsoft/agents/azure-ai-foundry.md
+fc0f1d7dd55b387931eb9abfd6af71b4e22b20e2a8ccea98e14b03cfc9d408da  Libraries/microsoft/agents/copilot-studio.md
+6c4ab039dd7e54de6a0cd467af23fa8bd3a65f3802726584045aaaeeb34357ee  Libraries/microsoft/agents/foundry-agent-service.md
+1d450f3188be54a61df1cf44515dc0e243ded6ab65860eae712095ff88c14582  Libraries/microsoft/architecture/aks.md
+ec081999bdb2d3c05bb02702b47c01c07cb78f4fccf0a99e13bc9dff80cb177a  Libraries/microsoft/architecture/app-service.md
+cb48650d38d5bc62f9d612b0d8b5e7f5c86cfb44dbd58080f0a6748639de7d56  Libraries/microsoft/architecture/application-insights.md
+2efc6ccc2091d836fb4baddd1112fdc99b3c30b6ad0900acf17b157a758d6400  Libraries/microsoft/architecture/avm.md
+1d277952a107adae2f5756ab5c619bf1151fddf49643f371604152cd5659be8c  Libraries/microsoft/architecture/azure-architecture-center.md
+c95fa7c1b75eb0ecb38a40f04abdbbe5db9992d05f8412034d90c440a53b5127  Libraries/microsoft/architecture/azure-landing-zones.md
+e2a792ae53c7971d6bda8e66e6e6a018f61591698928042858bd2b1c053c4de5  Libraries/microsoft/architecture/azure-sql-best-practices.md
+5f5a05ac67f1150ec36241d27ab00313d405eee7b1f7bcb5e6343c79b47c7acb  Libraries/microsoft/architecture/caf.md
+abcf506ca37221b0483277509cfa556c15741beeb45a1640663a10967d26b440  Libraries/microsoft/architecture/cosmos-db.md
+9f17ae52ed5f97013293098445fa129f1dfa7c38d8659ddca0dd4c747731c030  Libraries/microsoft/architecture/log-analytics.md
+11f4aeeef61ae0c77c4dffc15ec9350349c1a832f10ab112cee48db1d07a28b9  Libraries/microsoft/architecture/postgres-flex.md
+156b922fa49eb625a2b43e9e5e5cd87b4f703626e03d4393d3304a1132bfbd45  Libraries/microsoft/architecture/service-bus.md
+4f55b6b9664e491f41e9f137f8f9ba99697fc1e26f31ec2f58bb858abd0a9aac  Libraries/microsoft/architecture/waf.md
+ecbab902ec2fc589c1a601763628d13db8c9dc0391b10b4ceacc546f25cd575a  Libraries/microsoft/build/azure-devops.md
+35f9e5a8dc9654fb8f1afd31abc95bd3a78fedd2b7f85ab84888f8ff0ef25a82  Libraries/microsoft/build/azure-pipelines.md
+467ab04cfca122fa45fc29156920d2e8f98e6e8c7c9af31bdb732458a06161be  Libraries/microsoft/build/bicep.md
+b5ee14d6ad5a5bdff15fc9d5d48deb1fdda9a5b30c756857a3aa90ffcbcb018b  Libraries/microsoft/build/gh-actions.md
+a266793548300b34a4fb2d6abd95d2ee48421fceaf169fc65ab785b356bce728  Libraries/microsoft/build/gh-advanced-security.md
+4673c3eba3411dd13c947dbe595b057606b6316589b9717e3cd4de03095b4507  Libraries/microsoft/docs/ms-learn.md
+ced041844bc7b735e4cac0e6e6dae853a686de0502ea28be980f2be4a2b5a124  Libraries/microsoft/docs/ms-style-guide.md
+1ef11abb8cf7157c06c4ff928bacfc08183f408b36176f061e0db3292a3dc17a  Libraries/microsoft/governance/ai-red-teaming.md
+32489e76be6e3eae42b752a0a7f4bf4288f91c8c153659adea7994258d8da847  Libraries/microsoft/governance/ms-accessibility.md
+c1815ec4782205ccd61bc584faa1c0348d0666157ee47fc15bb833fc89d107e6  Libraries/microsoft/governance/ms-oss-policy.md
+2724b153cc3c499e36188f80727cdd771414c9359973f97893c80afbbf7faefa  Libraries/microsoft/governance/ms-privacy-standard.md
+fef2031d5d39317d211ed53c7f971113c886d757572c6f6e1c20388b453901d0  Libraries/microsoft/governance/ms-rai-standard.md
+d01382576df4081df3a81582577ac4ed738c006094e60b4e4ae3f64887f5c509  Libraries/microsoft/governance/rai-toolbox.md
+99310ccf918a37232b7583359c099652c341970a8710ef836caf1dfc1d2590fa  Libraries/microsoft/README.md
+250ff241c11ee326cbc1ca90904e91c4d5ae48866d71d413439c593fb0f92490  Libraries/microsoft/security/defender-for-cloud.md
+e7b5f15d745aa2b2c8589e484e262e8e3e8468be7310f4d94d312640445a3697  Libraries/microsoft/security/entra-id.md
+7bac7fead703c0ee72ba4558318463302dcd6eb2098211f215e690eddf968a4f  Libraries/microsoft/security/key-vault.md
+6193c5715ceeaeea267818a4b17ec39373af0a115ea780a1210f25be71ebf1f0  Libraries/microsoft/security/managed-identity.md
+5b3d0f21c3c76ac1aa7c5d1f8ab714bf1d95c40f27d57a0d19d5e0b4e791401b  Libraries/microsoft/security/mcsb.md
+93725de97ce09b09011262cf7a730da2c9688b0b5fe477fe6bf052ab1b7ad3a6  Libraries/microsoft/security/sdl.md
+8dc69692d699d18256c54ace2265b596308de3c5c2b2b0cd48e90c4902d1e74e  Libraries/microsoft/security/sfi.md
+b47717ad2927ea7239023b5d4ef1af5932bf0d2de5abc950f6caa09ba5c3307c  Libraries/microsoft/security/zero-trust.md
+11417ff024bf1f2313788494e1b50464970a13c1780ef939d1f6e6836a2b83e3  Libraries/README.md
+9ae177a9e7858118f6294b12633f65959f4964b5290d80c79843ce106f0aed3a  Libraries/tools/_template/index.template.md
+c753500a775b7d64df34838348f791abfd1a3caf92a7083c08377b8b977fd159  Libraries/tools/multi-agent-system/index.md
+9358295c66c06b84f57698e7bb0b155c58d692b4c1f9a51cc0afd5def478d512  README.md
+d08c8c21b483b80d38d2118b337c273beb7fa1beba7caa9f0686339034f4bba9  Setup/CHECKLIST.md
+abe2098926db1070d620ac550b2e61c3ada76c54455a1d8f6aee8ca9c80b82fc  Setup/SETUP.md
+7aa3d55273e4ed2c6b3b16023b2346657c24dcd628e6add86bff47113cf05c8e  Template/.agents/state/artifact-manifest.template.md
+6bea3e6ada6e4ffdf520c97a17ca4f58f023be881f3df644ac70c9eb28293543  Template/.agents/state/artifacts.template.md
+075c964e4c6c63303b2289f058b38300763cff2efe255f01628bd34c5566ead9  Template/.agents/state/checkpoint.template.md
+c928cb95c8e792e76f8290c8d028e84a83c9437c605c2c06b024a6d84608630b  Template/.agents/state/decisions.template.md
+81b2a9182488560dafd054113f5deb2b6b30d86a4edc5dd2fcb0db6c93bf1150  Template/.agents/state/integrity-log.template.md
+a832fc5e79b02bf023b9e7b1ded7d1e237ef29b52c4b808b6db7172e613adf13  Template/.agents/state/plan.template.md
+31cb1ec175e412a4c6a77b077417bdc9622ccb25ef3c7467a82ee6f41ca9140c  Template/.agents/state/project-profile.template.md
+4d48c306f2b9cee06a05fd8799c018328e3d8dd130c51c7737def327285d5ae0  Template/.agents/state/README.md
+903da48cfe9c9b5df1198bd315617e6622a726c00577e488d200242176ac3703  Template/.agents/state/role-manifest.template.md
+2481ca3b1bdeb074e28625014bb0768d1486219ae922e52e8547a4c45502a192  Template/.agents/state/validation-log.template.md
+13abbd710d9ddb8e0ce3ee750e9328df316bb0e95455e7f123d4ebec664fd022  Template/.github/chatmodes/accessibility.chatmode.md
+855076677d5244d983886b7bbefd695f7b923f31c457c65f94276bb26b2bf7d3  Template/.github/chatmodes/architect.chatmode.md
+f0dbc673f1af43f1246e67ce0bf89d7a193fdef9e55b6662a1b891dbee43084c  Template/.github/chatmodes/builder.chatmode.md
+7d0756f1e319cdcf3647781954bf4523ca52d58d8aac8bf41edfd62c90d70879  Template/.github/chatmodes/compliance-officer.chatmode.md
+fcb0e0edecd85e270b71554f10eaa66b20b35da18fedd13e327a0af72ec11137  Template/.github/chatmodes/data-steward.chatmode.md
+3295f8f7d6d61538db1595ecac1455e8559a72d7172e27dabcbd03c19fe15125  Template/.github/chatmodes/database-engineer.chatmode.md
+3a6057481527b1c77bde857e6619e9aa35de2f9df8e0f898d9bbc2fc2daa2f18  Template/.github/chatmodes/documenter.chatmode.md
+2f317c2742583512845d60300a41ea7fde263b9df15e07fac0f2639570a35ec3  Template/.github/chatmodes/finops.chatmode.md
+7d5af101df5610dacf192a1ecc578c02b7cc7e3eecf089c7fa16f0f0eff580d3  Template/.github/chatmodes/legal.chatmode.md
+68e52aa5c48daa101924975e972586993dc217beeccbd4ca4272306eee283c61  Template/.github/chatmodes/librarian.chatmode.md
+c5a43bce73d774c298a4887c9f5901d91fd0e41ec5fad0e0b6dd6fcf8dd52a68  Template/.github/chatmodes/maintainer.chatmode.md
+05b6e401d08b3fc38f2ed20dcdea844288e5ab61ce2c84cc152d6e6de4863312  Template/.github/chatmodes/orchestrator.chatmode.md
+6b0f7749891dc353307012a3c85e9c7b197ed8dfd582bb08c4b65260f5b2ea81  Template/.github/chatmodes/privacy-engineer.chatmode.md
+7dec395baa29725e33d26a343f900e47ecc5fdfe303ba2ff0626fce3782e04a2  Template/.github/chatmodes/product.chatmode.md
+30dd495f4758714450656e0eb86b3ed7acb0634c6f3d94711f0d61f3a54b0983  Template/.github/chatmodes/qa.chatmode.md
+1de62957c629c0ff49c2180d9de9526690b28c06825755c713e789aa40ad4e14  Template/.github/chatmodes/rai.chatmode.md
+022d1b42420334399bcb14c13c70729883c4227bd259b18e6de95fe7aa672274  Template/.github/chatmodes/release-manager.chatmode.md
+4204ef971bcf31df6964c4789367bff8932c1a0ff2ccdbe80d78bf15e91ca663  Template/.github/chatmodes/reviewer.chatmode.md
+0dcf28a1cdb943c3cb951b131f8ed24a2d3c0349e377a0f0928276d43f302e46  Template/.github/chatmodes/security-engineer.chatmode.md
+65245062f0c6724549e8beadbc83cdfe9a142e1db2600daca5e775a21b4cd53f  Template/.github/chatmodes/sre.chatmode.md
+d7c786d287843cff2b1ac5cf2eacd6a01f1728501898893b9d92e7baf9deb6e3  Template/.github/chatmodes/support.chatmode.md
+e51b5d246d0333596c4f19a9efe32b857510db9698a6dfc4a928e280018cb509  Template/.github/chatmodes/ux-researcher.chatmode.md
+86129cd7de88c0483c76096c76c317f37edff64aff98d02f7edda75c010f372a  Template/.github/chatmodes/validator.chatmode.md
+1d28cfc02f08199320fb65816b692de384d9f4f852f28b311583e599a2d2b3a5  Template/.github/copilot-instructions.md
+0a8f628806eee334839815dc268f8c8daa8398ee8478bd18847ea1c8df250bf2  Template/.github/instructions/general.instructions.md
+b11237fa830633cc1f2fa62c7a07a020bbd01cc2293bb81abe1c64c2f55b34ab  Template/.github/instructions/security.instructions.md
+8a40dd9e22e0957e6c0638b828689047ff73f7d6be1f6f674890aba9739405b3  Template/.github/prompts/handoff.prompt.md
+7d16f9dd9ec407d9dce1699fdf18664e161294681ec87363e8bdc5af319cdf2d  Template/.github/prompts/health-check.prompt.md
+36bb1680e9353d87bf4126df46a4b9ff40a9697760a29c0bcbe9fd7fc1993659  Template/.github/prompts/kickoff.prompt.md
+2d126f6c44d5262b9988ab2ada7f513afb32791725318c56a217ab17430b5307  Template/.github/prompts/migrate-existing.prompt.md
+87412c0ece050793b3e3d83b6d5fc4f8c8ac06772b3e4d3655f2d504bed6a0b4  Template/.github/prompts/phase-gate.prompt.md
+ad92756baffa6fe601e83d9941d64fb095cfd8044929d6d7a1e18e6d04a8a970  Template/.github/prompts/profile.prompt.md
+164a63441cc5bd45101705b8b1ab10984d174aafdb30d3323bb20f946a657951  Template/.github/prompts/recover.prompt.md
+986785cae49225cbc234f00353f69f968dd43126cae7089d52a60b48ec8b19bf  Template/.github/prompts/validate.prompt.md
+5087aece6dc642306b711d25efa634b6600deddee57bb5285f26c13d67682109  Template/.vscode/mcp.json
+f51fb04784ca27055eb0bbd1e9a8942067e70ad80cf4b46adc70a7d4d8bb7d80  Template/AGENTS.md
+````
+
+## IL-002: post-bare-remote scan (drift expected and explained)
+
+- Date: 2026-05-26T15:37:00Z
+- Trigger: post-remote-add (Option A — local-bare remote established for Check 11 validation)
+- git_head: 75154243f797311c9b7fb5539e78cbb17973c635
+- files_scanned: 122
+- sha256_baseline: b2e7fff8921cbcefb665a6f9e4ba8c22e2f2f614cf3749f8167ce5250e4f9ade
+- Check 7  (git fsck):       pass — empty output from `git fsck --full --strict`
+- Check 8  (hash readback):  pass with explained drift — IL-001 baseline `e32d17170a413e397c8a50bfaee8dd759d91a6e1cb5eae94824bec31119c650c` differs from IL-002 baseline. Drift cause: `.agents/state/integrity-log.md` was created between IL-001 and IL-002 (it is itself the only new file). files_scanned 121 → 122 confirms a single-file delta. No unexpected content changes detected against IL-001 manifest entries.
+- Check 9  (cross-ref):      pass — 56 library ids registered under `Libraries/` (IL-001 reported 55; recount under the current scan method is 56, all from existing entries — no new library files were added); 0 orphan `ref:`/`refs:` citations.
+- Check 10 (encoding audit): pass — BOM=0, ESC=0 across 120 .md files (IL-001: 119; +1 = integrity-log.md itself).
+- Check 11 (remote sync):    pass — `origin = C:\Users\mmcka\git-bares\multi-agent-system.git` (local-bare); `git ls-remote origin refs/heads/master` = `75154243f797311c9b7fb5539e78cbb17973c635`, equal to local HEAD.
+- Verdict: healthy
+- Notes: Second IL entry. Stage-1 design now exercises all five checks in `pass` state, including Check 11 which was `n/a` in IL-001. Local-bare trust domain validated end-to-end. Drift between IL-001 and IL-002 sha256_baseline is fully accounted for by the addition of integrity-log.md; no other content changed. Future scans should expect another single-file delta after this commit lands (integrity-log.md grows by the IL-002 entry).
+- turn_token: 2
+
+### IL-002 hash manifest
+
+````
+6b00841edd1ae094343cb06f6a1adc16b3b3fb013dd2708336b36cad6bfc159e  .agents/state/integrity-log.md
+2ad9a99a058d1e9e5a9c9d72668b5089be1a6f9113561657d687567e3e5ca0fe  .gitignore
+5fe8e3913d8138c23cd5b60adef2da71be7d46e4bf64a3779d03c7bfd64fe96e  Design/SYSTEM-DESIGN.md
+ad5c5673be95ebdb9cd63f90197d48f93128ebcc9c59fb0ecc0d5c238c6fc136  Libraries/_prior-art/agents-md.md
+30904959aa006f71263fe3da6911f86eb4c3b153d4d6ec6d71da7be05bcd66eb  Libraries/_prior-art/anthropic-patterns.md
+c7ce5f9f25df8f26135b842b1119893959b9dc62d30df610ee61d2bda3ad982b  Libraries/_prior-art/bmad-method.md
+1f7c888ec3345b15f6d1257a5c9846ef541f1ca67e669c01111fff8a151a2074  Libraries/_prior-art/compound-engineering.md
+c88ed07e41cfec1cf47bb46fefb7464e73c570b06868cbe779a12d77e5b365eb  Libraries/_prior-art/frameworks-survey.md
+604ca14944964e306ff99a91bd0c36454a98215bd22a3afa2f8cbc895e788870  Libraries/_prior-art/mcp.md
+779a1f16bba7d7b037e0c727659d2f8af95f9644cc0e6bef2d3425344357da44  Libraries/_prior-art/README.md
+a109a56550cefc9cade3523b5c9dbfa0e20a0cc273ed7bf189e5aeafddb0e159  Libraries/_prior-art/spec-kit.md
+9c70d1c643df72599727ec7d07830ae5a0c3f2bdb6ebfff6d5a2f84bf72d3346  Libraries/_prior-art/vscode-customization.md
+d6029395c33098cc3623d5c7c193b1b9ef3dff2a8c41bb12ef679d7083fd2729  Libraries/_schema/conventions.md
+a06130db7be149e133e8b0800964dfc990b60dce5cffdfa945c17a18329c5e25  Libraries/_schema/entry-schema.md
+ee9d8a8b370504c11ca415b0a5116f4756f5dfd2d4fc35913283aa2116901135  Libraries/core/agents-md.md
+20c328434cd7adbcb8efb714c109b6c7d7eab58eb0f068e25941c698e746b309  Libraries/core/compaction-and-recovery.md
+411fa44753082da3a6090b3e6da1179d4f0117e0a110162b2ba231a044e7fe5a  Libraries/core/mcp.md
+aab4322e58385a48835c7b6aa5128f0b7c6d7c756463481c28089f094b785803  Libraries/core/multi-agent-patterns.md
+f76359022615586485294b653b7c12a884fe3440fc8d53faad8fc81f8b958256  Libraries/core/state-and-handoffs.md
+31adc21c5c6111540e2869c7408ec1d79101881214ffa53db9841289c2071f09  Libraries/core/validation-and-recovery.md
+d0ff3e2014c5cb19fd373fe9172a4efa18d760385986a13f268c05f64af4af9f  Libraries/core/vscode-chat-modes.md
+ce981626566c3fa6534cd0ec94bfc6bdfea6aca071f50b473f997cf0beb679a6  Libraries/frameworks/anthropic-subagents.md
+84716b3fcc8892e0b57e874245be5b6ccd6e88910d0673afb412677513373df5  Libraries/frameworks/autogen.md
+612407c438c429c7bf6f39798caceffc968580b566bbc2889185963e0455a784  Libraries/frameworks/crewai.md
+3fe509533c01a764a5684b789a966697a73b92524bafe87c00318dbf05171c09  Libraries/frameworks/langgraph.md
+8dd56ac23da58be1dd49e9fb74bac49f544d2d3e43e1871e1eaaf9261cd0c4d3  Libraries/frameworks/microsoft-agent-framework.md
+4c4c756025c0269fef35e80d55c047fe8c270fc7a501f144697faadf962a5dcc  Libraries/frameworks/openai-agents-sdk.md
+cf13c7aabf5e5a68e113edf5b0cf7c3a668b225d604f52d0075ec90e31e253d5  Libraries/frameworks/semantic-kernel.md
+65b9442367d745faaf1d8a5aa550195b4a4f07354819cf1ef71af9d37a9eadbf  Libraries/governance/nist-ai-rmf.md
+70edc5b97ee789dc6ffe8f5f80a5e474f195f511c77f0b8e0ee9b34a8b7501a2  Libraries/governance/owasp-llm-top10.md
+ee6fd7f20cfaecf62be9e2cadf14ded84850632bdf26792ea2b73792ee7bc120  Libraries/governance/prompt-injection-defenses.md
+b1b9eb0ced8d1d760ef40df997cd8969e74740dfc36cf367aea9765073844982  Libraries/governance/responsible-ai-principles.md
+4bc95e03036090e8a275a7b144c1123839cbfae75467014d1c1bc110f66c0da2  Libraries/microsoft/agents/azure-ai-foundry.md
+fc0f1d7dd55b387931eb9abfd6af71b4e22b20e2a8ccea98e14b03cfc9d408da  Libraries/microsoft/agents/copilot-studio.md
+6c4ab039dd7e54de6a0cd467af23fa8bd3a65f3802726584045aaaeeb34357ee  Libraries/microsoft/agents/foundry-agent-service.md
+1d450f3188be54a61df1cf44515dc0e243ded6ab65860eae712095ff88c14582  Libraries/microsoft/architecture/aks.md
+ec081999bdb2d3c05bb02702b47c01c07cb78f4fccf0a99e13bc9dff80cb177a  Libraries/microsoft/architecture/app-service.md
+cb48650d38d5bc62f9d612b0d8b5e7f5c86cfb44dbd58080f0a6748639de7d56  Libraries/microsoft/architecture/application-insights.md
+2efc6ccc2091d836fb4baddd1112fdc99b3c30b6ad0900acf17b157a758d6400  Libraries/microsoft/architecture/avm.md
+1d277952a107adae2f5756ab5c619bf1151fddf49643f371604152cd5659be8c  Libraries/microsoft/architecture/azure-architecture-center.md
+c95fa7c1b75eb0ecb38a40f04abdbbe5db9992d05f8412034d90c440a53b5127  Libraries/microsoft/architecture/azure-landing-zones.md
+e2a792ae53c7971d6bda8e66e6e6a018f61591698928042858bd2b1c053c4de5  Libraries/microsoft/architecture/azure-sql-best-practices.md
+5f5a05ac67f1150ec36241d27ab00313d405eee7b1f7bcb5e6343c79b47c7acb  Libraries/microsoft/architecture/caf.md
+abcf506ca37221b0483277509cfa556c15741beeb45a1640663a10967d26b440  Libraries/microsoft/architecture/cosmos-db.md
+9f17ae52ed5f97013293098445fa129f1dfa7c38d8659ddca0dd4c747731c030  Libraries/microsoft/architecture/log-analytics.md
+11f4aeeef61ae0c77c4dffc15ec9350349c1a832f10ab112cee48db1d07a28b9  Libraries/microsoft/architecture/postgres-flex.md
+156b922fa49eb625a2b43e9e5e5cd87b4f703626e03d4393d3304a1132bfbd45  Libraries/microsoft/architecture/service-bus.md
+4f55b6b9664e491f41e9f137f8f9ba99697fc1e26f31ec2f58bb858abd0a9aac  Libraries/microsoft/architecture/waf.md
+ecbab902ec2fc589c1a601763628d13db8c9dc0391b10b4ceacc546f25cd575a  Libraries/microsoft/build/azure-devops.md
+35f9e5a8dc9654fb8f1afd31abc95bd3a78fedd2b7f85ab84888f8ff0ef25a82  Libraries/microsoft/build/azure-pipelines.md
+467ab04cfca122fa45fc29156920d2e8f98e6e8c7c9af31bdb732458a06161be  Libraries/microsoft/build/bicep.md
+b5ee14d6ad5a5bdff15fc9d5d48deb1fdda9a5b30c756857a3aa90ffcbcb018b  Libraries/microsoft/build/gh-actions.md
+a266793548300b34a4fb2d6abd95d2ee48421fceaf169fc65ab785b356bce728  Libraries/microsoft/build/gh-advanced-security.md
+4673c3eba3411dd13c947dbe595b057606b6316589b9717e3cd4de03095b4507  Libraries/microsoft/docs/ms-learn.md
+ced041844bc7b735e4cac0e6e6dae853a686de0502ea28be980f2be4a2b5a124  Libraries/microsoft/docs/ms-style-guide.md
+1ef11abb8cf7157c06c4ff928bacfc08183f408b36176f061e0db3292a3dc17a  Libraries/microsoft/governance/ai-red-teaming.md
+32489e76be6e3eae42b752a0a7f4bf4288f91c8c153659adea7994258d8da847  Libraries/microsoft/governance/ms-accessibility.md
+c1815ec4782205ccd61bc584faa1c0348d0666157ee47fc15bb833fc89d107e6  Libraries/microsoft/governance/ms-oss-policy.md
+2724b153cc3c499e36188f80727cdd771414c9359973f97893c80afbbf7faefa  Libraries/microsoft/governance/ms-privacy-standard.md
+fef2031d5d39317d211ed53c7f971113c886d757572c6f6e1c20388b453901d0  Libraries/microsoft/governance/ms-rai-standard.md
+d01382576df4081df3a81582577ac4ed738c006094e60b4e4ae3f64887f5c509  Libraries/microsoft/governance/rai-toolbox.md
+99310ccf918a37232b7583359c099652c341970a8710ef836caf1dfc1d2590fa  Libraries/microsoft/README.md
+250ff241c11ee326cbc1ca90904e91c4d5ae48866d71d413439c593fb0f92490  Libraries/microsoft/security/defender-for-cloud.md
+e7b5f15d745aa2b2c8589e484e262e8e3e8468be7310f4d94d312640445a3697  Libraries/microsoft/security/entra-id.md
+7bac7fead703c0ee72ba4558318463302dcd6eb2098211f215e690eddf968a4f  Libraries/microsoft/security/key-vault.md
+6193c5715ceeaeea267818a4b17ec39373af0a115ea780a1210f25be71ebf1f0  Libraries/microsoft/security/managed-identity.md
+5b3d0f21c3c76ac1aa7c5d1f8ab714bf1d95c40f27d57a0d19d5e0b4e791401b  Libraries/microsoft/security/mcsb.md
+93725de97ce09b09011262cf7a730da2c9688b0b5fe477fe6bf052ab1b7ad3a6  Libraries/microsoft/security/sdl.md
+8dc69692d699d18256c54ace2265b596308de3c5c2b2b0cd48e90c4902d1e74e  Libraries/microsoft/security/sfi.md
+b47717ad2927ea7239023b5d4ef1af5932bf0d2de5abc950f6caa09ba5c3307c  Libraries/microsoft/security/zero-trust.md
+11417ff024bf1f2313788494e1b50464970a13c1780ef939d1f6e6836a2b83e3  Libraries/README.md
+9ae177a9e7858118f6294b12633f65959f4964b5290d80c79843ce106f0aed3a  Libraries/tools/_template/index.template.md
+c753500a775b7d64df34838348f791abfd1a3caf92a7083c08377b8b977fd159  Libraries/tools/multi-agent-system/index.md
+9358295c66c06b84f57698e7bb0b155c58d692b4c1f9a51cc0afd5def478d512  README.md
+d08c8c21b483b80d38d2118b337c273beb7fa1beba7caa9f0686339034f4bba9  Setup/CHECKLIST.md
+abe2098926db1070d620ac550b2e61c3ada76c54455a1d8f6aee8ca9c80b82fc  Setup/SETUP.md
+7aa3d55273e4ed2c6b3b16023b2346657c24dcd628e6add86bff47113cf05c8e  Template/.agents/state/artifact-manifest.template.md
+6bea3e6ada6e4ffdf520c97a17ca4f58f023be881f3df644ac70c9eb28293543  Template/.agents/state/artifacts.template.md
+075c964e4c6c63303b2289f058b38300763cff2efe255f01628bd34c5566ead9  Template/.agents/state/checkpoint.template.md
+c928cb95c8e792e76f8290c8d028e84a83c9437c605c2c06b024a6d84608630b  Template/.agents/state/decisions.template.md
+81b2a9182488560dafd054113f5deb2b6b30d86a4edc5dd2fcb0db6c93bf1150  Template/.agents/state/integrity-log.template.md
+a832fc5e79b02bf023b9e7b1ded7d1e237ef29b52c4b808b6db7172e613adf13  Template/.agents/state/plan.template.md
+31cb1ec175e412a4c6a77b077417bdc9622ccb25ef3c7467a82ee6f41ca9140c  Template/.agents/state/project-profile.template.md
+4d48c306f2b9cee06a05fd8799c018328e3d8dd130c51c7737def327285d5ae0  Template/.agents/state/README.md
+903da48cfe9c9b5df1198bd315617e6622a726c00577e488d200242176ac3703  Template/.agents/state/role-manifest.template.md
+2481ca3b1bdeb074e28625014bb0768d1486219ae922e52e8547a4c45502a192  Template/.agents/state/validation-log.template.md
+13abbd710d9ddb8e0ce3ee750e9328df316bb0e95455e7f123d4ebec664fd022  Template/.github/chatmodes/accessibility.chatmode.md
+855076677d5244d983886b7bbefd695f7b923f31c457c65f94276bb26b2bf7d3  Template/.github/chatmodes/architect.chatmode.md
+f0dbc673f1af43f1246e67ce0bf89d7a193fdef9e55b6662a1b891dbee43084c  Template/.github/chatmodes/builder.chatmode.md
+7d0756f1e319cdcf3647781954bf4523ca52d58d8aac8bf41edfd62c90d70879  Template/.github/chatmodes/compliance-officer.chatmode.md
+fcb0e0edecd85e270b71554f10eaa66b20b35da18fedd13e327a0af72ec11137  Template/.github/chatmodes/data-steward.chatmode.md
+3295f8f7d6d61538db1595ecac1455e8559a72d7172e27dabcbd03c19fe15125  Template/.github/chatmodes/database-engineer.chatmode.md
+3a6057481527b1c77bde857e6619e9aa35de2f9df8e0f898d9bbc2fc2daa2f18  Template/.github/chatmodes/documenter.chatmode.md
+2f317c2742583512845d60300a41ea7fde263b9df15e07fac0f2639570a35ec3  Template/.github/chatmodes/finops.chatmode.md
+7d5af101df5610dacf192a1ecc578c02b7cc7e3eecf089c7fa16f0f0eff580d3  Template/.github/chatmodes/legal.chatmode.md
+68e52aa5c48daa101924975e972586993dc217beeccbd4ca4272306eee283c61  Template/.github/chatmodes/librarian.chatmode.md
+c5a43bce73d774c298a4887c9f5901d91fd0e41ec5fad0e0b6dd6fcf8dd52a68  Template/.github/chatmodes/maintainer.chatmode.md
+05b6e401d08b3fc38f2ed20dcdea844288e5ab61ce2c84cc152d6e6de4863312  Template/.github/chatmodes/orchestrator.chatmode.md
+6b0f7749891dc353307012a3c85e9c7b197ed8dfd582bb08c4b65260f5b2ea81  Template/.github/chatmodes/privacy-engineer.chatmode.md
+7dec395baa29725e33d26a343f900e47ecc5fdfe303ba2ff0626fce3782e04a2  Template/.github/chatmodes/product.chatmode.md
+30dd495f4758714450656e0eb86b3ed7acb0634c6f3d94711f0d61f3a54b0983  Template/.github/chatmodes/qa.chatmode.md
+1de62957c629c0ff49c2180d9de9526690b28c06825755c713e789aa40ad4e14  Template/.github/chatmodes/rai.chatmode.md
+022d1b42420334399bcb14c13c70729883c4227bd259b18e6de95fe7aa672274  Template/.github/chatmodes/release-manager.chatmode.md
+4204ef971bcf31df6964c4789367bff8932c1a0ff2ccdbe80d78bf15e91ca663  Template/.github/chatmodes/reviewer.chatmode.md
+0dcf28a1cdb943c3cb951b131f8ed24a2d3c0349e377a0f0928276d43f302e46  Template/.github/chatmodes/security-engineer.chatmode.md
+65245062f0c6724549e8beadbc83cdfe9a142e1db2600daca5e775a21b4cd53f  Template/.github/chatmodes/sre.chatmode.md
+d7c786d287843cff2b1ac5cf2eacd6a01f1728501898893b9d92e7baf9deb6e3  Template/.github/chatmodes/support.chatmode.md
+e51b5d246d0333596c4f19a9efe32b857510db9698a6dfc4a928e280018cb509  Template/.github/chatmodes/ux-researcher.chatmode.md
+86129cd7de88c0483c76096c76c317f37edff64aff98d02f7edda75c010f372a  Template/.github/chatmodes/validator.chatmode.md
+1d28cfc02f08199320fb65816b692de384d9f4f852f28b311583e599a2d2b3a5  Template/.github/copilot-instructions.md
+0a8f628806eee334839815dc268f8c8daa8398ee8478bd18847ea1c8df250bf2  Template/.github/instructions/general.instructions.md
+b11237fa830633cc1f2fa62c7a07a020bbd01cc2293bb81abe1c64c2f55b34ab  Template/.github/instructions/security.instructions.md
+8a40dd9e22e0957e6c0638b828689047ff73f7d6be1f6f674890aba9739405b3  Template/.github/prompts/handoff.prompt.md
+7d16f9dd9ec407d9dce1699fdf18664e161294681ec87363e8bdc5af319cdf2d  Template/.github/prompts/health-check.prompt.md
+36bb1680e9353d87bf4126df46a4b9ff40a9697760a29c0bcbe9fd7fc1993659  Template/.github/prompts/kickoff.prompt.md
+2d126f6c44d5262b9988ab2ada7f513afb32791725318c56a217ab17430b5307  Template/.github/prompts/migrate-existing.prompt.md
+87412c0ece050793b3e3d83b6d5fc4f8c8ac06772b3e4d3655f2d504bed6a0b4  Template/.github/prompts/phase-gate.prompt.md
+ad92756baffa6fe601e83d9941d64fb095cfd8044929d6d7a1e18e6d04a8a970  Template/.github/prompts/profile.prompt.md
+164a63441cc5bd45101705b8b1ab10984d174aafdb30d3323bb20f946a657951  Template/.github/prompts/recover.prompt.md
+986785cae49225cbc234f00353f69f968dd43126cae7089d52a60b48ec8b19bf  Template/.github/prompts/validate.prompt.md
+5087aece6dc642306b711d25efa634b6600deddee57bb5285f26c13d67682109  Template/.vscode/mcp.json
+f51fb04784ca27055eb0bbd1e9a8942067e70ad80cf4b46adc70a7d4d8bb7d80  Template/AGENTS.md
+````
+
+## IL-003: deliberate-tamper negative test (drift detected, verdict unhealthy)
+
+- Date: 2026-05-26T17:00:00Z
+- Trigger: operator-initiated tamper test (Stage-1 negative validation; see tests/2026-05-26-stage1-validation-poc.md Test Run 3)
+- git_head: 6c2e8dd5e41fc3f30ebf103960fdf6deba51613a
+- files_scanned: 123
+- sha256_baseline: aa74dd5fcbb69f9f0ae50d647f284aaa170f9ef3bcc9bb15a51288f1b0dbe624
+- Reference baseline (pre-tamper, same HEAD): 3318980f9633f7f8e00425b3b3fdf7aebc7d1ed821a8c8814b0567e7b93e4efb (files_scanned 123)
+- Check 7  (git fsck):       pass - empty output from `git fsck --full --strict`
+- Check 8  (hash readback):  **fail** - baseline differs from pre-tamper reference. Drift attributed to a single tracked file: `Template/.agents/state/plan.template.md` SHA a832fc5e79b02bf023b9e7b1ded7d1e237ef29b52c4b808b6db7172e613adf13 -> 1424304aad76a7e5dbca5a895b1c0802c2aaf6014efe167ba33e6220e412dc09 (one byte appended; 662 -> 663 bytes). All other 122 manifest entries identical to pre-tamper. This is the unexpected-drift signature.
+- Check 9  (cross-ref):      pass - library ids and ref citations unchanged by tamper
+- Check 10 (encoding audit): pass - BOM=0, ESC=0 across 121 .md files
+- Check 11 (remote sync):    pass - local HEAD 6c2e8dd5e41fc3f30ebf103960fdf6deba51613a equals `origin/master` 6c2e8dd5e41fc3f30ebf103960fdf6deba51613a (tamper is in working tree only, not committed)
+- Verdict: **unhealthy** (Check 8 fail)
+- Notes: Negative test by design. Demonstrates that Check 8 detects content drift on a tracked file even when the change is sub-byte-visible (single trailing space) and all other gates remain green. Recovery procedure executed immediately after this scan; see IL-004. No artifact committed in the tampered state.
+- turn_token: 3
+
+### IL-003 hash manifest (tampered state)
+
+````
+ffc53c5f9018f79ab5e1045d7d0fef076b6f8d5f7b7bbd943785e0b9f7255c47  .agents/state/integrity-log.md
+2ad9a99a058d1e9e5a9c9d72668b5089be1a6f9113561657d687567e3e5ca0fe  .gitignore
+5fe8e3913d8138c23cd5b60adef2da71be7d46e4bf64a3779d03c7bfd64fe96e  Design/SYSTEM-DESIGN.md
+ad5c5673be95ebdb9cd63f90197d48f93128ebcc9c59fb0ecc0d5c238c6fc136  Libraries/_prior-art/agents-md.md
+30904959aa006f71263fe3da6911f86eb4c3b153d4d6ec6d71da7be05bcd66eb  Libraries/_prior-art/anthropic-patterns.md
+c7ce5f9f25df8f26135b842b1119893959b9dc62d30df610ee61d2bda3ad982b  Libraries/_prior-art/bmad-method.md
+1f7c888ec3345b15f6d1257a5c9846ef541f1ca67e669c01111fff8a151a2074  Libraries/_prior-art/compound-engineering.md
+c88ed07e41cfec1cf47bb46fefb7464e73c570b06868cbe779a12d77e5b365eb  Libraries/_prior-art/frameworks-survey.md
+604ca14944964e306ff99a91bd0c36454a98215bd22a3afa2f8cbc895e788870  Libraries/_prior-art/mcp.md
+779a1f16bba7d7b037e0c727659d2f8af95f9644cc0e6bef2d3425344357da44  Libraries/_prior-art/README.md
+a109a56550cefc9cade3523b5c9dbfa0e20a0cc273ed7bf189e5aeafddb0e159  Libraries/_prior-art/spec-kit.md
+9c70d1c643df72599727ec7d07830ae5a0c3f2bdb6ebfff6d5a2f84bf72d3346  Libraries/_prior-art/vscode-customization.md
+d6029395c33098cc3623d5c7c193b1b9ef3dff2a8c41bb12ef679d7083fd2729  Libraries/_schema/conventions.md
+a06130db7be149e133e8b0800964dfc990b60dce5cffdfa945c17a18329c5e25  Libraries/_schema/entry-schema.md
+ee9d8a8b370504c11ca415b0a5116f4756f5dfd2d4fc35913283aa2116901135  Libraries/core/agents-md.md
+20c328434cd7adbcb8efb714c109b6c7d7eab58eb0f068e25941c698e746b309  Libraries/core/compaction-and-recovery.md
+411fa44753082da3a6090b3e6da1179d4f0117e0a110162b2ba231a044e7fe5a  Libraries/core/mcp.md
+aab4322e58385a48835c7b6aa5128f0b7c6d7c756463481c28089f094b785803  Libraries/core/multi-agent-patterns.md
+f76359022615586485294b653b7c12a884fe3440fc8d53faad8fc81f8b958256  Libraries/core/state-and-handoffs.md
+31adc21c5c6111540e2869c7408ec1d79101881214ffa53db9841289c2071f09  Libraries/core/validation-and-recovery.md
+d0ff3e2014c5cb19fd373fe9172a4efa18d760385986a13f268c05f64af4af9f  Libraries/core/vscode-chat-modes.md
+ce981626566c3fa6534cd0ec94bfc6bdfea6aca071f50b473f997cf0beb679a6  Libraries/frameworks/anthropic-subagents.md
+84716b3fcc8892e0b57e874245be5b6ccd6e88910d0673afb412677513373df5  Libraries/frameworks/autogen.md
+612407c438c429c7bf6f39798caceffc968580b566bbc2889185963e0455a784  Libraries/frameworks/crewai.md
+3fe509533c01a764a5684b789a966697a73b92524bafe87c00318dbf05171c09  Libraries/frameworks/langgraph.md
+8dd56ac23da58be1dd49e9fb74bac49f544d2d3e43e1871e1eaaf9261cd0c4d3  Libraries/frameworks/microsoft-agent-framework.md
+4c4c756025c0269fef35e80d55c047fe8c270fc7a501f144697faadf962a5dcc  Libraries/frameworks/openai-agents-sdk.md
+cf13c7aabf5e5a68e113edf5b0cf7c3a668b225d604f52d0075ec90e31e253d5  Libraries/frameworks/semantic-kernel.md
+65b9442367d745faaf1d8a5aa550195b4a4f07354819cf1ef71af9d37a9eadbf  Libraries/governance/nist-ai-rmf.md
+70edc5b97ee789dc6ffe8f5f80a5e474f195f511c77f0b8e0ee9b34a8b7501a2  Libraries/governance/owasp-llm-top10.md
+ee6fd7f20cfaecf62be9e2cadf14ded84850632bdf26792ea2b73792ee7bc120  Libraries/governance/prompt-injection-defenses.md
+b1b9eb0ced8d1d760ef40df997cd8969e74740dfc36cf367aea9765073844982  Libraries/governance/responsible-ai-principles.md
+4bc95e03036090e8a275a7b144c1123839cbfae75467014d1c1bc110f66c0da2  Libraries/microsoft/agents/azure-ai-foundry.md
+fc0f1d7dd55b387931eb9abfd6af71b4e22b20e2a8ccea98e14b03cfc9d408da  Libraries/microsoft/agents/copilot-studio.md
+6c4ab039dd7e54de6a0cd467af23fa8bd3a65f3802726584045aaaeeb34357ee  Libraries/microsoft/agents/foundry-agent-service.md
+1d450f3188be54a61df1cf44515dc0e243ded6ab65860eae712095ff88c14582  Libraries/microsoft/architecture/aks.md
+cb48650d38d5bc62f9d612b0d8b5e7f5c86cfb44dbd58080f0a6748639de7d56  Libraries/microsoft/architecture/application-insights.md
+ec081999bdb2d3c05bb02702b47c01c07cb78f4fccf0a99e13bc9dff80cb177a  Libraries/microsoft/architecture/app-service.md
+2efc6ccc2091d836fb4baddd1112fdc99b3c30b6ad0900acf17b157a758d6400  Libraries/microsoft/architecture/avm.md
+1d277952a107adae2f5756ab5c619bf1151fddf49643f371604152cd5659be8c  Libraries/microsoft/architecture/azure-architecture-center.md
+c95fa7c1b75eb0ecb38a40f04abdbbe5db9992d05f8412034d90c440a53b5127  Libraries/microsoft/architecture/azure-landing-zones.md
+e2a792ae53c7971d6bda8e66e6e6a018f61591698928042858bd2b1c053c4de5  Libraries/microsoft/architecture/azure-sql-best-practices.md
+5f5a05ac67f1150ec36241d27ab00313d405eee7b1f7bcb5e6343c79b47c7acb  Libraries/microsoft/architecture/caf.md
+abcf506ca37221b0483277509cfa556c15741beeb45a1640663a10967d26b440  Libraries/microsoft/architecture/cosmos-db.md
+9f17ae52ed5f97013293098445fa129f1dfa7c38d8659ddca0dd4c747731c030  Libraries/microsoft/architecture/log-analytics.md
+11f4aeeef61ae0c77c4dffc15ec9350349c1a832f10ab112cee48db1d07a28b9  Libraries/microsoft/architecture/postgres-flex.md
+156b922fa49eb625a2b43e9e5e5cd87b4f703626e03d4393d3304a1132bfbd45  Libraries/microsoft/architecture/service-bus.md
+4f55b6b9664e491f41e9f137f8f9ba99697fc1e26f31ec2f58bb858abd0a9aac  Libraries/microsoft/architecture/waf.md
+ecbab902ec2fc589c1a601763628d13db8c9dc0391b10b4ceacc546f25cd575a  Libraries/microsoft/build/azure-devops.md
+35f9e5a8dc9654fb8f1afd31abc95bd3a78fedd2b7f85ab84888f8ff0ef25a82  Libraries/microsoft/build/azure-pipelines.md
+467ab04cfca122fa45fc29156920d2e8f98e6e8c7c9af31bdb732458a06161be  Libraries/microsoft/build/bicep.md
+b5ee14d6ad5a5bdff15fc9d5d48deb1fdda9a5b30c756857a3aa90ffcbcb018b  Libraries/microsoft/build/gh-actions.md
+a266793548300b34a4fb2d6abd95d2ee48421fceaf169fc65ab785b356bce728  Libraries/microsoft/build/gh-advanced-security.md
+4673c3eba3411dd13c947dbe595b057606b6316589b9717e3cd4de03095b4507  Libraries/microsoft/docs/ms-learn.md
+ced041844bc7b735e4cac0e6e6dae853a686de0502ea28be980f2be4a2b5a124  Libraries/microsoft/docs/ms-style-guide.md
+1ef11abb8cf7157c06c4ff928bacfc08183f408b36176f061e0db3292a3dc17a  Libraries/microsoft/governance/ai-red-teaming.md
+32489e76be6e3eae42b752a0a7f4bf4288f91c8c153659adea7994258d8da847  Libraries/microsoft/governance/ms-accessibility.md
+c1815ec4782205ccd61bc584faa1c0348d0666157ee47fc15bb833fc89d107e6  Libraries/microsoft/governance/ms-oss-policy.md
+2724b153cc3c499e36188f80727cdd771414c9359973f97893c80afbbf7faefa  Libraries/microsoft/governance/ms-privacy-standard.md
+fef2031d5d39317d211ed53c7f971113c886d757572c6f6e1c20388b453901d0  Libraries/microsoft/governance/ms-rai-standard.md
+d01382576df4081df3a81582577ac4ed738c006094e60b4e4ae3f64887f5c509  Libraries/microsoft/governance/rai-toolbox.md
+99310ccf918a37232b7583359c099652c341970a8710ef836caf1dfc1d2590fa  Libraries/microsoft/README.md
+250ff241c11ee326cbc1ca90904e91c4d5ae48866d71d413439c593fb0f92490  Libraries/microsoft/security/defender-for-cloud.md
+e7b5f15d745aa2b2c8589e484e262e8e3e8468be7310f4d94d312640445a3697  Libraries/microsoft/security/entra-id.md
+7bac7fead703c0ee72ba4558318463302dcd6eb2098211f215e690eddf968a4f  Libraries/microsoft/security/key-vault.md
+6193c5715ceeaeea267818a4b17ec39373af0a115ea780a1210f25be71ebf1f0  Libraries/microsoft/security/managed-identity.md
+5b3d0f21c3c76ac1aa7c5d1f8ab714bf1d95c40f27d57a0d19d5e0b4e791401b  Libraries/microsoft/security/mcsb.md
+93725de97ce09b09011262cf7a730da2c9688b0b5fe477fe6bf052ab1b7ad3a6  Libraries/microsoft/security/sdl.md
+8dc69692d699d18256c54ace2265b596308de3c5c2b2b0cd48e90c4902d1e74e  Libraries/microsoft/security/sfi.md
+b47717ad2927ea7239023b5d4ef1af5932bf0d2de5abc950f6caa09ba5c3307c  Libraries/microsoft/security/zero-trust.md
+11417ff024bf1f2313788494e1b50464970a13c1780ef939d1f6e6836a2b83e3  Libraries/README.md
+9ae177a9e7858118f6294b12633f65959f4964b5290d80c79843ce106f0aed3a  Libraries/tools/_template/index.template.md
+c753500a775b7d64df34838348f791abfd1a3caf92a7083c08377b8b977fd159  Libraries/tools/multi-agent-system/index.md
+9358295c66c06b84f57698e7bb0b155c58d692b4c1f9a51cc0afd5def478d512  README.md
+d08c8c21b483b80d38d2118b337c273beb7fa1beba7caa9f0686339034f4bba9  Setup/CHECKLIST.md
+abe2098926db1070d620ac550b2e61c3ada76c54455a1d8f6aee8ca9c80b82fc  Setup/SETUP.md
+7aa3d55273e4ed2c6b3b16023b2346657c24dcd628e6add86bff47113cf05c8e  Template/.agents/state/artifact-manifest.template.md
+6bea3e6ada6e4ffdf520c97a17ca4f58f023be881f3df644ac70c9eb28293543  Template/.agents/state/artifacts.template.md
+075c964e4c6c63303b2289f058b38300763cff2efe255f01628bd34c5566ead9  Template/.agents/state/checkpoint.template.md
+c928cb95c8e792e76f8290c8d028e84a83c9437c605c2c06b024a6d84608630b  Template/.agents/state/decisions.template.md
+81b2a9182488560dafd054113f5deb2b6b30d86a4edc5dd2fcb0db6c93bf1150  Template/.agents/state/integrity-log.template.md
+1424304aad76a7e5dbca5a895b1c0802c2aaf6014efe167ba33e6220e412dc09  Template/.agents/state/plan.template.md
+31cb1ec175e412a4c6a77b077417bdc9622ccb25ef3c7467a82ee6f41ca9140c  Template/.agents/state/project-profile.template.md
+4d48c306f2b9cee06a05fd8799c018328e3d8dd130c51c7737def327285d5ae0  Template/.agents/state/README.md
+903da48cfe9c9b5df1198bd315617e6622a726c00577e488d200242176ac3703  Template/.agents/state/role-manifest.template.md
+2481ca3b1bdeb074e28625014bb0768d1486219ae922e52e8547a4c45502a192  Template/.agents/state/validation-log.template.md
+13abbd710d9ddb8e0ce3ee750e9328df316bb0e95455e7f123d4ebec664fd022  Template/.github/chatmodes/accessibility.chatmode.md
+855076677d5244d983886b7bbefd695f7b923f31c457c65f94276bb26b2bf7d3  Template/.github/chatmodes/architect.chatmode.md
+f0dbc673f1af43f1246e67ce0bf89d7a193fdef9e55b6662a1b891dbee43084c  Template/.github/chatmodes/builder.chatmode.md
+7d0756f1e319cdcf3647781954bf4523ca52d58d8aac8bf41edfd62c90d70879  Template/.github/chatmodes/compliance-officer.chatmode.md
+3295f8f7d6d61538db1595ecac1455e8559a72d7172e27dabcbd03c19fe15125  Template/.github/chatmodes/database-engineer.chatmode.md
+fcb0e0edecd85e270b71554f10eaa66b20b35da18fedd13e327a0af72ec11137  Template/.github/chatmodes/data-steward.chatmode.md
+3a6057481527b1c77bde857e6619e9aa35de2f9df8e0f898d9bbc2fc2daa2f18  Template/.github/chatmodes/documenter.chatmode.md
+2f317c2742583512845d60300a41ea7fde263b9df15e07fac0f2639570a35ec3  Template/.github/chatmodes/finops.chatmode.md
+7d5af101df5610dacf192a1ecc578c02b7cc7e3eecf089c7fa16f0f0eff580d3  Template/.github/chatmodes/legal.chatmode.md
+68e52aa5c48daa101924975e972586993dc217beeccbd4ca4272306eee283c61  Template/.github/chatmodes/librarian.chatmode.md
+c5a43bce73d774c298a4887c9f5901d91fd0e41ec5fad0e0b6dd6fcf8dd52a68  Template/.github/chatmodes/maintainer.chatmode.md
+05b6e401d08b3fc38f2ed20dcdea844288e5ab61ce2c84cc152d6e6de4863312  Template/.github/chatmodes/orchestrator.chatmode.md
+6b0f7749891dc353307012a3c85e9c7b197ed8dfd582bb08c4b65260f5b2ea81  Template/.github/chatmodes/privacy-engineer.chatmode.md
+7dec395baa29725e33d26a343f900e47ecc5fdfe303ba2ff0626fce3782e04a2  Template/.github/chatmodes/product.chatmode.md
+30dd495f4758714450656e0eb86b3ed7acb0634c6f3d94711f0d61f3a54b0983  Template/.github/chatmodes/qa.chatmode.md
+1de62957c629c0ff49c2180d9de9526690b28c06825755c713e789aa40ad4e14  Template/.github/chatmodes/rai.chatmode.md
+022d1b42420334399bcb14c13c70729883c4227bd259b18e6de95fe7aa672274  Template/.github/chatmodes/release-manager.chatmode.md
+4204ef971bcf31df6964c4789367bff8932c1a0ff2ccdbe80d78bf15e91ca663  Template/.github/chatmodes/reviewer.chatmode.md
+0dcf28a1cdb943c3cb951b131f8ed24a2d3c0349e377a0f0928276d43f302e46  Template/.github/chatmodes/security-engineer.chatmode.md
+65245062f0c6724549e8beadbc83cdfe9a142e1db2600daca5e775a21b4cd53f  Template/.github/chatmodes/sre.chatmode.md
+d7c786d287843cff2b1ac5cf2eacd6a01f1728501898893b9d92e7baf9deb6e3  Template/.github/chatmodes/support.chatmode.md
+e51b5d246d0333596c4f19a9efe32b857510db9698a6dfc4a928e280018cb509  Template/.github/chatmodes/ux-researcher.chatmode.md
+86129cd7de88c0483c76096c76c317f37edff64aff98d02f7edda75c010f372a  Template/.github/chatmodes/validator.chatmode.md
+1d28cfc02f08199320fb65816b692de384d9f4f852f28b311583e599a2d2b3a5  Template/.github/copilot-instructions.md
+0a8f628806eee334839815dc268f8c8daa8398ee8478bd18847ea1c8df250bf2  Template/.github/instructions/general.instructions.md
+b11237fa830633cc1f2fa62c7a07a020bbd01cc2293bb81abe1c64c2f55b34ab  Template/.github/instructions/security.instructions.md
+8a40dd9e22e0957e6c0638b828689047ff73f7d6be1f6f674890aba9739405b3  Template/.github/prompts/handoff.prompt.md
+7d16f9dd9ec407d9dce1699fdf18664e161294681ec87363e8bdc5af319cdf2d  Template/.github/prompts/health-check.prompt.md
+36bb1680e9353d87bf4126df46a4b9ff40a9697760a29c0bcbe9fd7fc1993659  Template/.github/prompts/kickoff.prompt.md
+2d126f6c44d5262b9988ab2ada7f513afb32791725318c56a217ab17430b5307  Template/.github/prompts/migrate-existing.prompt.md
+87412c0ece050793b3e3d83b6d5fc4f8c8ac06772b3e4d3655f2d504bed6a0b4  Template/.github/prompts/phase-gate.prompt.md
+ad92756baffa6fe601e83d9941d64fb095cfd8044929d6d7a1e18e6d04a8a970  Template/.github/prompts/profile.prompt.md
+164a63441cc5bd45101705b8b1ab10984d174aafdb30d3323bb20f946a657951  Template/.github/prompts/recover.prompt.md
+986785cae49225cbc234f00353f69f968dd43126cae7089d52a60b48ec8b19bf  Template/.github/prompts/validate.prompt.md
+5087aece6dc642306b711d25efa634b6600deddee57bb5285f26c13d67682109  Template/.vscode/mcp.json
+f51fb04784ca27055eb0bbd1e9a8942067e70ad80cf4b46adc70a7d4d8bb7d80  Template/AGENTS.md
+48c33ff7f808a57979a5be3fcf9a5193b808163d5e09d6e0e82d6c67a1ddc378  tests/2026-05-26-stage1-validation-poc.md
+````
+
+## IL-004: post-revert recovery scan (verdict healthy)
+
+- Date: 2026-05-26T17:05:00Z
+- Trigger: post-revert verification (Stage-1 negative-test recovery loop; see tests/2026-05-26-stage1-validation-poc.md Test Run 3)
+- git_head: 6c2e8dd5e41fc3f30ebf103960fdf6deba51613a
+- files_scanned: 123
+- sha256_baseline: 3318980f9633f7f8e00425b3b3fdf7aebc7d1ed821a8c8814b0567e7b93e4efb
+- Reference baseline (pre-tamper, same HEAD): 3318980f9633f7f8e00425b3b3fdf7aebc7d1ed821a8c8814b0567e7b93e4efb (files_scanned 123)
+- Check 7  (git fsck):       pass - clean
+- Check 8  (hash readback):  pass - baseline equals pre-tamper reference exactly; `Template/.agents/state/plan.template.md` SHA restored to a832fc5e79b02bf023b9e7b1ded7d1e237ef29b52c4b808b6db7172e613adf13; recovery loop closed
+- Check 9  (cross-ref):      pass
+- Check 10 (encoding audit): pass - BOM=0, ESC=0 across 121 .md files
+- Check 11 (remote sync):    pass - local HEAD 6c2e8dd5e41fc3f30ebf103960fdf6deba51613a equals `origin/master` 6c2e8dd5e41fc3f30ebf103960fdf6deba51613a
+- Verdict: healthy
+- Notes: Recovery confirmation entry. Tamper from IL-003 reverted via `git checkout -- Template/.agents/state/plan.template.md`; manifest re-derives to the pre-tamper baseline byte-for-byte. Together IL-003 and IL-004 demonstrate the full Stage-1 detect-revert-verify loop on the meta-template repo.
+- turn_token: 4
+
+### IL-004 hash manifest (post-revert; matches pre-tamper)
+
+````
+ffc53c5f9018f79ab5e1045d7d0fef076b6f8d5f7b7bbd943785e0b9f7255c47  .agents/state/integrity-log.md
+2ad9a99a058d1e9e5a9c9d72668b5089be1a6f9113561657d687567e3e5ca0fe  .gitignore
+5fe8e3913d8138c23cd5b60adef2da71be7d46e4bf64a3779d03c7bfd64fe96e  Design/SYSTEM-DESIGN.md
+ad5c5673be95ebdb9cd63f90197d48f93128ebcc9c59fb0ecc0d5c238c6fc136  Libraries/_prior-art/agents-md.md
+30904959aa006f71263fe3da6911f86eb4c3b153d4d6ec6d71da7be05bcd66eb  Libraries/_prior-art/anthropic-patterns.md
+c7ce5f9f25df8f26135b842b1119893959b9dc62d30df610ee61d2bda3ad982b  Libraries/_prior-art/bmad-method.md
+1f7c888ec3345b15f6d1257a5c9846ef541f1ca67e669c01111fff8a151a2074  Libraries/_prior-art/compound-engineering.md
+c88ed07e41cfec1cf47bb46fefb7464e73c570b06868cbe779a12d77e5b365eb  Libraries/_prior-art/frameworks-survey.md
+604ca14944964e306ff99a91bd0c36454a98215bd22a3afa2f8cbc895e788870  Libraries/_prior-art/mcp.md
+779a1f16bba7d7b037e0c727659d2f8af95f9644cc0e6bef2d3425344357da44  Libraries/_prior-art/README.md
+a109a56550cefc9cade3523b5c9dbfa0e20a0cc273ed7bf189e5aeafddb0e159  Libraries/_prior-art/spec-kit.md
+9c70d1c643df72599727ec7d07830ae5a0c3f2bdb6ebfff6d5a2f84bf72d3346  Libraries/_prior-art/vscode-customization.md
+d6029395c33098cc3623d5c7c193b1b9ef3dff2a8c41bb12ef679d7083fd2729  Libraries/_schema/conventions.md
+a06130db7be149e133e8b0800964dfc990b60dce5cffdfa945c17a18329c5e25  Libraries/_schema/entry-schema.md
+ee9d8a8b370504c11ca415b0a5116f4756f5dfd2d4fc35913283aa2116901135  Libraries/core/agents-md.md
+20c328434cd7adbcb8efb714c109b6c7d7eab58eb0f068e25941c698e746b309  Libraries/core/compaction-and-recovery.md
+411fa44753082da3a6090b3e6da1179d4f0117e0a110162b2ba231a044e7fe5a  Libraries/core/mcp.md
+aab4322e58385a48835c7b6aa5128f0b7c6d7c756463481c28089f094b785803  Libraries/core/multi-agent-patterns.md
+f76359022615586485294b653b7c12a884fe3440fc8d53faad8fc81f8b958256  Libraries/core/state-and-handoffs.md
+31adc21c5c6111540e2869c7408ec1d79101881214ffa53db9841289c2071f09  Libraries/core/validation-and-recovery.md
+d0ff3e2014c5cb19fd373fe9172a4efa18d760385986a13f268c05f64af4af9f  Libraries/core/vscode-chat-modes.md
+ce981626566c3fa6534cd0ec94bfc6bdfea6aca071f50b473f997cf0beb679a6  Libraries/frameworks/anthropic-subagents.md
+84716b3fcc8892e0b57e874245be5b6ccd6e88910d0673afb412677513373df5  Libraries/frameworks/autogen.md
+612407c438c429c7bf6f39798caceffc968580b566bbc2889185963e0455a784  Libraries/frameworks/crewai.md
+3fe509533c01a764a5684b789a966697a73b92524bafe87c00318dbf05171c09  Libraries/frameworks/langgraph.md
+8dd56ac23da58be1dd49e9fb74bac49f544d2d3e43e1871e1eaaf9261cd0c4d3  Libraries/frameworks/microsoft-agent-framework.md
+4c4c756025c0269fef35e80d55c047fe8c270fc7a501f144697faadf962a5dcc  Libraries/frameworks/openai-agents-sdk.md
+cf13c7aabf5e5a68e113edf5b0cf7c3a668b225d604f52d0075ec90e31e253d5  Libraries/frameworks/semantic-kernel.md
+65b9442367d745faaf1d8a5aa550195b4a4f07354819cf1ef71af9d37a9eadbf  Libraries/governance/nist-ai-rmf.md
+70edc5b97ee789dc6ffe8f5f80a5e474f195f511c77f0b8e0ee9b34a8b7501a2  Libraries/governance/owasp-llm-top10.md
+ee6fd7f20cfaecf62be9e2cadf14ded84850632bdf26792ea2b73792ee7bc120  Libraries/governance/prompt-injection-defenses.md
+b1b9eb0ced8d1d760ef40df997cd8969e74740dfc36cf367aea9765073844982  Libraries/governance/responsible-ai-principles.md
+4bc95e03036090e8a275a7b144c1123839cbfae75467014d1c1bc110f66c0da2  Libraries/microsoft/agents/azure-ai-foundry.md
+fc0f1d7dd55b387931eb9abfd6af71b4e22b20e2a8ccea98e14b03cfc9d408da  Libraries/microsoft/agents/copilot-studio.md
+6c4ab039dd7e54de6a0cd467af23fa8bd3a65f3802726584045aaaeeb34357ee  Libraries/microsoft/agents/foundry-agent-service.md
+1d450f3188be54a61df1cf44515dc0e243ded6ab65860eae712095ff88c14582  Libraries/microsoft/architecture/aks.md
+cb48650d38d5bc62f9d612b0d8b5e7f5c86cfb44dbd58080f0a6748639de7d56  Libraries/microsoft/architecture/application-insights.md
+ec081999bdb2d3c05bb02702b47c01c07cb78f4fccf0a99e13bc9dff80cb177a  Libraries/microsoft/architecture/app-service.md
+2efc6ccc2091d836fb4baddd1112fdc99b3c30b6ad0900acf17b157a758d6400  Libraries/microsoft/architecture/avm.md
+1d277952a107adae2f5756ab5c619bf1151fddf49643f371604152cd5659be8c  Libraries/microsoft/architecture/azure-architecture-center.md
+c95fa7c1b75eb0ecb38a40f04abdbbe5db9992d05f8412034d90c440a53b5127  Libraries/microsoft/architecture/azure-landing-zones.md
+e2a792ae53c7971d6bda8e66e6e6a018f61591698928042858bd2b1c053c4de5  Libraries/microsoft/architecture/azure-sql-best-practices.md
+5f5a05ac67f1150ec36241d27ab00313d405eee7b1f7bcb5e6343c79b47c7acb  Libraries/microsoft/architecture/caf.md
+abcf506ca37221b0483277509cfa556c15741beeb45a1640663a10967d26b440  Libraries/microsoft/architecture/cosmos-db.md
+9f17ae52ed5f97013293098445fa129f1dfa7c38d8659ddca0dd4c747731c030  Libraries/microsoft/architecture/log-analytics.md
+11f4aeeef61ae0c77c4dffc15ec9350349c1a832f10ab112cee48db1d07a28b9  Libraries/microsoft/architecture/postgres-flex.md
+156b922fa49eb625a2b43e9e5e5cd87b4f703626e03d4393d3304a1132bfbd45  Libraries/microsoft/architecture/service-bus.md
+4f55b6b9664e491f41e9f137f8f9ba99697fc1e26f31ec2f58bb858abd0a9aac  Libraries/microsoft/architecture/waf.md
+ecbab902ec2fc589c1a601763628d13db8c9dc0391b10b4ceacc546f25cd575a  Libraries/microsoft/build/azure-devops.md
+35f9e5a8dc9654fb8f1afd31abc95bd3a78fedd2b7f85ab84888f8ff0ef25a82  Libraries/microsoft/build/azure-pipelines.md
+467ab04cfca122fa45fc29156920d2e8f98e6e8c7c9af31bdb732458a06161be  Libraries/microsoft/build/bicep.md
+b5ee14d6ad5a5bdff15fc9d5d48deb1fdda9a5b30c756857a3aa90ffcbcb018b  Libraries/microsoft/build/gh-actions.md
+a266793548300b34a4fb2d6abd95d2ee48421fceaf169fc65ab785b356bce728  Libraries/microsoft/build/gh-advanced-security.md
+4673c3eba3411dd13c947dbe595b057606b6316589b9717e3cd4de03095b4507  Libraries/microsoft/docs/ms-learn.md
+ced041844bc7b735e4cac0e6e6dae853a686de0502ea28be980f2be4a2b5a124  Libraries/microsoft/docs/ms-style-guide.md
+1ef11abb8cf7157c06c4ff928bacfc08183f408b36176f061e0db3292a3dc17a  Libraries/microsoft/governance/ai-red-teaming.md
+32489e76be6e3eae42b752a0a7f4bf4288f91c8c153659adea7994258d8da847  Libraries/microsoft/governance/ms-accessibility.md
+c1815ec4782205ccd61bc584faa1c0348d0666157ee47fc15bb833fc89d107e6  Libraries/microsoft/governance/ms-oss-policy.md
+2724b153cc3c499e36188f80727cdd771414c9359973f97893c80afbbf7faefa  Libraries/microsoft/governance/ms-privacy-standard.md
+fef2031d5d39317d211ed53c7f971113c886d757572c6f6e1c20388b453901d0  Libraries/microsoft/governance/ms-rai-standard.md
+d01382576df4081df3a81582577ac4ed738c006094e60b4e4ae3f64887f5c509  Libraries/microsoft/governance/rai-toolbox.md
+99310ccf918a37232b7583359c099652c341970a8710ef836caf1dfc1d2590fa  Libraries/microsoft/README.md
+250ff241c11ee326cbc1ca90904e91c4d5ae48866d71d413439c593fb0f92490  Libraries/microsoft/security/defender-for-cloud.md
+e7b5f15d745aa2b2c8589e484e262e8e3e8468be7310f4d94d312640445a3697  Libraries/microsoft/security/entra-id.md
+7bac7fead703c0ee72ba4558318463302dcd6eb2098211f215e690eddf968a4f  Libraries/microsoft/security/key-vault.md
+6193c5715ceeaeea267818a4b17ec39373af0a115ea780a1210f25be71ebf1f0  Libraries/microsoft/security/managed-identity.md
+5b3d0f21c3c76ac1aa7c5d1f8ab714bf1d95c40f27d57a0d19d5e0b4e791401b  Libraries/microsoft/security/mcsb.md
+93725de97ce09b09011262cf7a730da2c9688b0b5fe477fe6bf052ab1b7ad3a6  Libraries/microsoft/security/sdl.md
+8dc69692d699d18256c54ace2265b596308de3c5c2b2b0cd48e90c4902d1e74e  Libraries/microsoft/security/sfi.md
+b47717ad2927ea7239023b5d4ef1af5932bf0d2de5abc950f6caa09ba5c3307c  Libraries/microsoft/security/zero-trust.md
+11417ff024bf1f2313788494e1b50464970a13c1780ef939d1f6e6836a2b83e3  Libraries/README.md
+9ae177a9e7858118f6294b12633f65959f4964b5290d80c79843ce106f0aed3a  Libraries/tools/_template/index.template.md
+c753500a775b7d64df34838348f791abfd1a3caf92a7083c08377b8b977fd159  Libraries/tools/multi-agent-system/index.md
+9358295c66c06b84f57698e7bb0b155c58d692b4c1f9a51cc0afd5def478d512  README.md
+d08c8c21b483b80d38d2118b337c273beb7fa1beba7caa9f0686339034f4bba9  Setup/CHECKLIST.md
+abe2098926db1070d620ac550b2e61c3ada76c54455a1d8f6aee8ca9c80b82fc  Setup/SETUP.md
+7aa3d55273e4ed2c6b3b16023b2346657c24dcd628e6add86bff47113cf05c8e  Template/.agents/state/artifact-manifest.template.md
+6bea3e6ada6e4ffdf520c97a17ca4f58f023be881f3df644ac70c9eb28293543  Template/.agents/state/artifacts.template.md
+075c964e4c6c63303b2289f058b38300763cff2efe255f01628bd34c5566ead9  Template/.agents/state/checkpoint.template.md
+c928cb95c8e792e76f8290c8d028e84a83c9437c605c2c06b024a6d84608630b  Template/.agents/state/decisions.template.md
+81b2a9182488560dafd054113f5deb2b6b30d86a4edc5dd2fcb0db6c93bf1150  Template/.agents/state/integrity-log.template.md
+a832fc5e79b02bf023b9e7b1ded7d1e237ef29b52c4b808b6db7172e613adf13  Template/.agents/state/plan.template.md
+31cb1ec175e412a4c6a77b077417bdc9622ccb25ef3c7467a82ee6f41ca9140c  Template/.agents/state/project-profile.template.md
+4d48c306f2b9cee06a05fd8799c018328e3d8dd130c51c7737def327285d5ae0  Template/.agents/state/README.md
+903da48cfe9c9b5df1198bd315617e6622a726c00577e488d200242176ac3703  Template/.agents/state/role-manifest.template.md
+2481ca3b1bdeb074e28625014bb0768d1486219ae922e52e8547a4c45502a192  Template/.agents/state/validation-log.template.md
+13abbd710d9ddb8e0ce3ee750e9328df316bb0e95455e7f123d4ebec664fd022  Template/.github/chatmodes/accessibility.chatmode.md
+855076677d5244d983886b7bbefd695f7b923f31c457c65f94276bb26b2bf7d3  Template/.github/chatmodes/architect.chatmode.md
+f0dbc673f1af43f1246e67ce0bf89d7a193fdef9e55b6662a1b891dbee43084c  Template/.github/chatmodes/builder.chatmode.md
+7d0756f1e319cdcf3647781954bf4523ca52d58d8aac8bf41edfd62c90d70879  Template/.github/chatmodes/compliance-officer.chatmode.md
+3295f8f7d6d61538db1595ecac1455e8559a72d7172e27dabcbd03c19fe15125  Template/.github/chatmodes/database-engineer.chatmode.md
+fcb0e0edecd85e270b71554f10eaa66b20b35da18fedd13e327a0af72ec11137  Template/.github/chatmodes/data-steward.chatmode.md
+3a6057481527b1c77bde857e6619e9aa35de2f9df8e0f898d9bbc2fc2daa2f18  Template/.github/chatmodes/documenter.chatmode.md
+2f317c2742583512845d60300a41ea7fde263b9df15e07fac0f2639570a35ec3  Template/.github/chatmodes/finops.chatmode.md
+7d5af101df5610dacf192a1ecc578c02b7cc7e3eecf089c7fa16f0f0eff580d3  Template/.github/chatmodes/legal.chatmode.md
+68e52aa5c48daa101924975e972586993dc217beeccbd4ca4272306eee283c61  Template/.github/chatmodes/librarian.chatmode.md
+c5a43bce73d774c298a4887c9f5901d91fd0e41ec5fad0e0b6dd6fcf8dd52a68  Template/.github/chatmodes/maintainer.chatmode.md
+05b6e401d08b3fc38f2ed20dcdea844288e5ab61ce2c84cc152d6e6de4863312  Template/.github/chatmodes/orchestrator.chatmode.md
+6b0f7749891dc353307012a3c85e9c7b197ed8dfd582bb08c4b65260f5b2ea81  Template/.github/chatmodes/privacy-engineer.chatmode.md
+7dec395baa29725e33d26a343f900e47ecc5fdfe303ba2ff0626fce3782e04a2  Template/.github/chatmodes/product.chatmode.md
+30dd495f4758714450656e0eb86b3ed7acb0634c6f3d94711f0d61f3a54b0983  Template/.github/chatmodes/qa.chatmode.md
+1de62957c629c0ff49c2180d9de9526690b28c06825755c713e789aa40ad4e14  Template/.github/chatmodes/rai.chatmode.md
+022d1b42420334399bcb14c13c70729883c4227bd259b18e6de95fe7aa672274  Template/.github/chatmodes/release-manager.chatmode.md
+4204ef971bcf31df6964c4789367bff8932c1a0ff2ccdbe80d78bf15e91ca663  Template/.github/chatmodes/reviewer.chatmode.md
+0dcf28a1cdb943c3cb951b131f8ed24a2d3c0349e377a0f0928276d43f302e46  Template/.github/chatmodes/security-engineer.chatmode.md
+65245062f0c6724549e8beadbc83cdfe9a142e1db2600daca5e775a21b4cd53f  Template/.github/chatmodes/sre.chatmode.md
+d7c786d287843cff2b1ac5cf2eacd6a01f1728501898893b9d92e7baf9deb6e3  Template/.github/chatmodes/support.chatmode.md
+e51b5d246d0333596c4f19a9efe32b857510db9698a6dfc4a928e280018cb509  Template/.github/chatmodes/ux-researcher.chatmode.md
+86129cd7de88c0483c76096c76c317f37edff64aff98d02f7edda75c010f372a  Template/.github/chatmodes/validator.chatmode.md
+1d28cfc02f08199320fb65816b692de384d9f4f852f28b311583e599a2d2b3a5  Template/.github/copilot-instructions.md
+0a8f628806eee334839815dc268f8c8daa8398ee8478bd18847ea1c8df250bf2  Template/.github/instructions/general.instructions.md
+b11237fa830633cc1f2fa62c7a07a020bbd01cc2293bb81abe1c64c2f55b34ab  Template/.github/instructions/security.instructions.md
+8a40dd9e22e0957e6c0638b828689047ff73f7d6be1f6f674890aba9739405b3  Template/.github/prompts/handoff.prompt.md
+7d16f9dd9ec407d9dce1699fdf18664e161294681ec87363e8bdc5af319cdf2d  Template/.github/prompts/health-check.prompt.md
+36bb1680e9353d87bf4126df46a4b9ff40a9697760a29c0bcbe9fd7fc1993659  Template/.github/prompts/kickoff.prompt.md
+2d126f6c44d5262b9988ab2ada7f513afb32791725318c56a217ab17430b5307  Template/.github/prompts/migrate-existing.prompt.md
+87412c0ece050793b3e3d83b6d5fc4f8c8ac06772b3e4d3655f2d504bed6a0b4  Template/.github/prompts/phase-gate.prompt.md
+ad92756baffa6fe601e83d9941d64fb095cfd8044929d6d7a1e18e6d04a8a970  Template/.github/prompts/profile.prompt.md
+164a63441cc5bd45101705b8b1ab10984d174aafdb30d3323bb20f946a657951  Template/.github/prompts/recover.prompt.md
+986785cae49225cbc234f00353f69f968dd43126cae7089d52a60b48ec8b19bf  Template/.github/prompts/validate.prompt.md
+5087aece6dc642306b711d25efa634b6600deddee57bb5285f26c13d67682109  Template/.vscode/mcp.json
+f51fb04784ca27055eb0bbd1e9a8942067e70ad80cf4b46adc70a7d4d8bb7d80  Template/AGENTS.md
+48c33ff7f808a57979a5be3fcf9a5193b808163d5e09d6e0e82d6c67a1ddc378  tests/2026-05-26-stage1-validation-poc.md
+````
+
+## IL-005: post-H housekeeping scan (verdict healthy)
+
+- Date: 2026-05-26T17:22:41Z
+- Trigger: housekeeping; close staleness warning after commits `4a9ee42` (F: /recover wired to integrity log), `9936b7e` (POC v3 Test Run 4), `cf625df` (H: governance cross-links)
+- git_head: cf625dfd53cad781dd515c961eca717bb8676489
+- files_scanned: 123
+- sha256_baseline: 7aaa0b56ac519e2a9e1ea233725ba818952c33b36e67f11a46580bdb6cfa257c
+- Check 7  (git fsck):       pass - clean
+- Check 8  (hash readback):  pass - per-file SHA-256 + manifest baseline derived deterministically from `git ls-files`
+- Check 9  (cross-ref):      pass - no dangling `ref:` / `refs:` (manual spot-check of the 4 files modified since IL-004; no new IDs introduced)
+- Check 10 (encoding audit): pass - BOM=0, ESC=0 across 121 .md files
+- Check 11 (remote sync):    pass - local HEAD cf625dfd53cad781dd515c961eca717bb8676489 equals `origin/master` cf625dfd53cad781dd515c961eca717bb8676489
+- Verdict: healthy
+- Notes: Routine housekeeping scan. No drift expected; confirms the four commits since IL-004 left the manifest in a clean state. Establishes a fresh `sha256_baseline` so the next `/recover` run does not emit the stale-log warning. files_scanned unchanged from IL-004 (no files added or removed in the interim).
+- turn_token: 5
+
+### IL-005 hash manifest
+
+````
+a000bc20dec417dcc2d58a75f92af7241f5b5cf535427aef30d3019c57a48a86  .agents/state/integrity-log.md
+2ad9a99a058d1e9e5a9c9d72668b5089be1a6f9113561657d687567e3e5ca0fe  .gitignore
+5fe8e3913d8138c23cd5b60adef2da71be7d46e4bf64a3779d03c7bfd64fe96e  Design/SYSTEM-DESIGN.md
+ad5c5673be95ebdb9cd63f90197d48f93128ebcc9c59fb0ecc0d5c238c6fc136  Libraries/_prior-art/agents-md.md
+30904959aa006f71263fe3da6911f86eb4c3b153d4d6ec6d71da7be05bcd66eb  Libraries/_prior-art/anthropic-patterns.md
+c7ce5f9f25df8f26135b842b1119893959b9dc62d30df610ee61d2bda3ad982b  Libraries/_prior-art/bmad-method.md
+1f7c888ec3345b15f6d1257a5c9846ef541f1ca67e669c01111fff8a151a2074  Libraries/_prior-art/compound-engineering.md
+c88ed07e41cfec1cf47bb46fefb7464e73c570b06868cbe779a12d77e5b365eb  Libraries/_prior-art/frameworks-survey.md
+604ca14944964e306ff99a91bd0c36454a98215bd22a3afa2f8cbc895e788870  Libraries/_prior-art/mcp.md
+779a1f16bba7d7b037e0c727659d2f8af95f9644cc0e6bef2d3425344357da44  Libraries/_prior-art/README.md
+a109a56550cefc9cade3523b5c9dbfa0e20a0cc273ed7bf189e5aeafddb0e159  Libraries/_prior-art/spec-kit.md
+9c70d1c643df72599727ec7d07830ae5a0c3f2bdb6ebfff6d5a2f84bf72d3346  Libraries/_prior-art/vscode-customization.md
+d6029395c33098cc3623d5c7c193b1b9ef3dff2a8c41bb12ef679d7083fd2729  Libraries/_schema/conventions.md
+a06130db7be149e133e8b0800964dfc990b60dce5cffdfa945c17a18329c5e25  Libraries/_schema/entry-schema.md
+ee9d8a8b370504c11ca415b0a5116f4756f5dfd2d4fc35913283aa2116901135  Libraries/core/agents-md.md
+20c328434cd7adbcb8efb714c109b6c7d7eab58eb0f068e25941c698e746b309  Libraries/core/compaction-and-recovery.md
+411fa44753082da3a6090b3e6da1179d4f0117e0a110162b2ba231a044e7fe5a  Libraries/core/mcp.md
+aab4322e58385a48835c7b6aa5128f0b7c6d7c756463481c28089f094b785803  Libraries/core/multi-agent-patterns.md
+f76359022615586485294b653b7c12a884fe3440fc8d53faad8fc81f8b958256  Libraries/core/state-and-handoffs.md
+b9f95c16937e25cf858e3a069c6979c28d6001125f612d9d71c6da884d203d40  Libraries/core/validation-and-recovery.md
+d0ff3e2014c5cb19fd373fe9172a4efa18d760385986a13f268c05f64af4af9f  Libraries/core/vscode-chat-modes.md
+ce981626566c3fa6534cd0ec94bfc6bdfea6aca071f50b473f997cf0beb679a6  Libraries/frameworks/anthropic-subagents.md
+84716b3fcc8892e0b57e874245be5b6ccd6e88910d0673afb412677513373df5  Libraries/frameworks/autogen.md
+612407c438c429c7bf6f39798caceffc968580b566bbc2889185963e0455a784  Libraries/frameworks/crewai.md
+3fe509533c01a764a5684b789a966697a73b92524bafe87c00318dbf05171c09  Libraries/frameworks/langgraph.md
+8dd56ac23da58be1dd49e9fb74bac49f544d2d3e43e1871e1eaaf9261cd0c4d3  Libraries/frameworks/microsoft-agent-framework.md
+4c4c756025c0269fef35e80d55c047fe8c270fc7a501f144697faadf962a5dcc  Libraries/frameworks/openai-agents-sdk.md
+cf13c7aabf5e5a68e113edf5b0cf7c3a668b225d604f52d0075ec90e31e253d5  Libraries/frameworks/semantic-kernel.md
+7c44302c427203017fa010f12ff48de18f72845185f3fc6e8e6d2ebaf2ee2f20  Libraries/governance/nist-ai-rmf.md
+d44ed5c68c9d2bbd4d801b6c991a50ce02f79819d053c1ae99aff03e1bde9835  Libraries/governance/owasp-llm-top10.md
+ee6fd7f20cfaecf62be9e2cadf14ded84850632bdf26792ea2b73792ee7bc120  Libraries/governance/prompt-injection-defenses.md
+2d89884b9195660276b4b38f5bf63eb0be1243326540e090b251b4d8398f433e  Libraries/governance/responsible-ai-principles.md
+4bc95e03036090e8a275a7b144c1123839cbfae75467014d1c1bc110f66c0da2  Libraries/microsoft/agents/azure-ai-foundry.md
+fc0f1d7dd55b387931eb9abfd6af71b4e22b20e2a8ccea98e14b03cfc9d408da  Libraries/microsoft/agents/copilot-studio.md
+6c4ab039dd7e54de6a0cd467af23fa8bd3a65f3802726584045aaaeeb34357ee  Libraries/microsoft/agents/foundry-agent-service.md
+1d450f3188be54a61df1cf44515dc0e243ded6ab65860eae712095ff88c14582  Libraries/microsoft/architecture/aks.md
+cb48650d38d5bc62f9d612b0d8b5e7f5c86cfb44dbd58080f0a6748639de7d56  Libraries/microsoft/architecture/application-insights.md
+ec081999bdb2d3c05bb02702b47c01c07cb78f4fccf0a99e13bc9dff80cb177a  Libraries/microsoft/architecture/app-service.md
+2efc6ccc2091d836fb4baddd1112fdc99b3c30b6ad0900acf17b157a758d6400  Libraries/microsoft/architecture/avm.md
+1d277952a107adae2f5756ab5c619bf1151fddf49643f371604152cd5659be8c  Libraries/microsoft/architecture/azure-architecture-center.md
+c95fa7c1b75eb0ecb38a40f04abdbbe5db9992d05f8412034d90c440a53b5127  Libraries/microsoft/architecture/azure-landing-zones.md
+e2a792ae53c7971d6bda8e66e6e6a018f61591698928042858bd2b1c053c4de5  Libraries/microsoft/architecture/azure-sql-best-practices.md
+5f5a05ac67f1150ec36241d27ab00313d405eee7b1f7bcb5e6343c79b47c7acb  Libraries/microsoft/architecture/caf.md
+abcf506ca37221b0483277509cfa556c15741beeb45a1640663a10967d26b440  Libraries/microsoft/architecture/cosmos-db.md
+9f17ae52ed5f97013293098445fa129f1dfa7c38d8659ddca0dd4c747731c030  Libraries/microsoft/architecture/log-analytics.md
+11f4aeeef61ae0c77c4dffc15ec9350349c1a832f10ab112cee48db1d07a28b9  Libraries/microsoft/architecture/postgres-flex.md
+156b922fa49eb625a2b43e9e5e5cd87b4f703626e03d4393d3304a1132bfbd45  Libraries/microsoft/architecture/service-bus.md
+4f55b6b9664e491f41e9f137f8f9ba99697fc1e26f31ec2f58bb858abd0a9aac  Libraries/microsoft/architecture/waf.md
+ecbab902ec2fc589c1a601763628d13db8c9dc0391b10b4ceacc546f25cd575a  Libraries/microsoft/build/azure-devops.md
+35f9e5a8dc9654fb8f1afd31abc95bd3a78fedd2b7f85ab84888f8ff0ef25a82  Libraries/microsoft/build/azure-pipelines.md
+467ab04cfca122fa45fc29156920d2e8f98e6e8c7c9af31bdb732458a06161be  Libraries/microsoft/build/bicep.md
+b5ee14d6ad5a5bdff15fc9d5d48deb1fdda9a5b30c756857a3aa90ffcbcb018b  Libraries/microsoft/build/gh-actions.md
+a266793548300b34a4fb2d6abd95d2ee48421fceaf169fc65ab785b356bce728  Libraries/microsoft/build/gh-advanced-security.md
+4673c3eba3411dd13c947dbe595b057606b6316589b9717e3cd4de03095b4507  Libraries/microsoft/docs/ms-learn.md
+ced041844bc7b735e4cac0e6e6dae853a686de0502ea28be980f2be4a2b5a124  Libraries/microsoft/docs/ms-style-guide.md
+1ef11abb8cf7157c06c4ff928bacfc08183f408b36176f061e0db3292a3dc17a  Libraries/microsoft/governance/ai-red-teaming.md
+32489e76be6e3eae42b752a0a7f4bf4288f91c8c153659adea7994258d8da847  Libraries/microsoft/governance/ms-accessibility.md
+c1815ec4782205ccd61bc584faa1c0348d0666157ee47fc15bb833fc89d107e6  Libraries/microsoft/governance/ms-oss-policy.md
+2724b153cc3c499e36188f80727cdd771414c9359973f97893c80afbbf7faefa  Libraries/microsoft/governance/ms-privacy-standard.md
+fef2031d5d39317d211ed53c7f971113c886d757572c6f6e1c20388b453901d0  Libraries/microsoft/governance/ms-rai-standard.md
+d01382576df4081df3a81582577ac4ed738c006094e60b4e4ae3f64887f5c509  Libraries/microsoft/governance/rai-toolbox.md
+99310ccf918a37232b7583359c099652c341970a8710ef836caf1dfc1d2590fa  Libraries/microsoft/README.md
+250ff241c11ee326cbc1ca90904e91c4d5ae48866d71d413439c593fb0f92490  Libraries/microsoft/security/defender-for-cloud.md
+e7b5f15d745aa2b2c8589e484e262e8e3e8468be7310f4d94d312640445a3697  Libraries/microsoft/security/entra-id.md
+7bac7fead703c0ee72ba4558318463302dcd6eb2098211f215e690eddf968a4f  Libraries/microsoft/security/key-vault.md
+6193c5715ceeaeea267818a4b17ec39373af0a115ea780a1210f25be71ebf1f0  Libraries/microsoft/security/managed-identity.md
+5b3d0f21c3c76ac1aa7c5d1f8ab714bf1d95c40f27d57a0d19d5e0b4e791401b  Libraries/microsoft/security/mcsb.md
+93725de97ce09b09011262cf7a730da2c9688b0b5fe477fe6bf052ab1b7ad3a6  Libraries/microsoft/security/sdl.md
+8dc69692d699d18256c54ace2265b596308de3c5c2b2b0cd48e90c4902d1e74e  Libraries/microsoft/security/sfi.md
+b47717ad2927ea7239023b5d4ef1af5932bf0d2de5abc950f6caa09ba5c3307c  Libraries/microsoft/security/zero-trust.md
+11417ff024bf1f2313788494e1b50464970a13c1780ef939d1f6e6836a2b83e3  Libraries/README.md
+9ae177a9e7858118f6294b12633f65959f4964b5290d80c79843ce106f0aed3a  Libraries/tools/_template/index.template.md
+c753500a775b7d64df34838348f791abfd1a3caf92a7083c08377b8b977fd159  Libraries/tools/multi-agent-system/index.md
+9358295c66c06b84f57698e7bb0b155c58d692b4c1f9a51cc0afd5def478d512  README.md
+d08c8c21b483b80d38d2118b337c273beb7fa1beba7caa9f0686339034f4bba9  Setup/CHECKLIST.md
+abe2098926db1070d620ac550b2e61c3ada76c54455a1d8f6aee8ca9c80b82fc  Setup/SETUP.md
+7aa3d55273e4ed2c6b3b16023b2346657c24dcd628e6add86bff47113cf05c8e  Template/.agents/state/artifact-manifest.template.md
+6bea3e6ada6e4ffdf520c97a17ca4f58f023be881f3df644ac70c9eb28293543  Template/.agents/state/artifacts.template.md
+075c964e4c6c63303b2289f058b38300763cff2efe255f01628bd34c5566ead9  Template/.agents/state/checkpoint.template.md
+c928cb95c8e792e76f8290c8d028e84a83c9437c605c2c06b024a6d84608630b  Template/.agents/state/decisions.template.md
+81b2a9182488560dafd054113f5deb2b6b30d86a4edc5dd2fcb0db6c93bf1150  Template/.agents/state/integrity-log.template.md
+a832fc5e79b02bf023b9e7b1ded7d1e237ef29b52c4b808b6db7172e613adf13  Template/.agents/state/plan.template.md
+31cb1ec175e412a4c6a77b077417bdc9622ccb25ef3c7467a82ee6f41ca9140c  Template/.agents/state/project-profile.template.md
+4d48c306f2b9cee06a05fd8799c018328e3d8dd130c51c7737def327285d5ae0  Template/.agents/state/README.md
+903da48cfe9c9b5df1198bd315617e6622a726c00577e488d200242176ac3703  Template/.agents/state/role-manifest.template.md
+2481ca3b1bdeb074e28625014bb0768d1486219ae922e52e8547a4c45502a192  Template/.agents/state/validation-log.template.md
+13abbd710d9ddb8e0ce3ee750e9328df316bb0e95455e7f123d4ebec664fd022  Template/.github/chatmodes/accessibility.chatmode.md
+855076677d5244d983886b7bbefd695f7b923f31c457c65f94276bb26b2bf7d3  Template/.github/chatmodes/architect.chatmode.md
+f0dbc673f1af43f1246e67ce0bf89d7a193fdef9e55b6662a1b891dbee43084c  Template/.github/chatmodes/builder.chatmode.md
+7d0756f1e319cdcf3647781954bf4523ca52d58d8aac8bf41edfd62c90d70879  Template/.github/chatmodes/compliance-officer.chatmode.md
+3295f8f7d6d61538db1595ecac1455e8559a72d7172e27dabcbd03c19fe15125  Template/.github/chatmodes/database-engineer.chatmode.md
+fcb0e0edecd85e270b71554f10eaa66b20b35da18fedd13e327a0af72ec11137  Template/.github/chatmodes/data-steward.chatmode.md
+3a6057481527b1c77bde857e6619e9aa35de2f9df8e0f898d9bbc2fc2daa2f18  Template/.github/chatmodes/documenter.chatmode.md
+2f317c2742583512845d60300a41ea7fde263b9df15e07fac0f2639570a35ec3  Template/.github/chatmodes/finops.chatmode.md
+7d5af101df5610dacf192a1ecc578c02b7cc7e3eecf089c7fa16f0f0eff580d3  Template/.github/chatmodes/legal.chatmode.md
+68e52aa5c48daa101924975e972586993dc217beeccbd4ca4272306eee283c61  Template/.github/chatmodes/librarian.chatmode.md
+c5a43bce73d774c298a4887c9f5901d91fd0e41ec5fad0e0b6dd6fcf8dd52a68  Template/.github/chatmodes/maintainer.chatmode.md
+05b6e401d08b3fc38f2ed20dcdea844288e5ab61ce2c84cc152d6e6de4863312  Template/.github/chatmodes/orchestrator.chatmode.md
+6b0f7749891dc353307012a3c85e9c7b197ed8dfd582bb08c4b65260f5b2ea81  Template/.github/chatmodes/privacy-engineer.chatmode.md
+7dec395baa29725e33d26a343f900e47ecc5fdfe303ba2ff0626fce3782e04a2  Template/.github/chatmodes/product.chatmode.md
+30dd495f4758714450656e0eb86b3ed7acb0634c6f3d94711f0d61f3a54b0983  Template/.github/chatmodes/qa.chatmode.md
+1de62957c629c0ff49c2180d9de9526690b28c06825755c713e789aa40ad4e14  Template/.github/chatmodes/rai.chatmode.md
+022d1b42420334399bcb14c13c70729883c4227bd259b18e6de95fe7aa672274  Template/.github/chatmodes/release-manager.chatmode.md
+4204ef971bcf31df6964c4789367bff8932c1a0ff2ccdbe80d78bf15e91ca663  Template/.github/chatmodes/reviewer.chatmode.md
+0dcf28a1cdb943c3cb951b131f8ed24a2d3c0349e377a0f0928276d43f302e46  Template/.github/chatmodes/security-engineer.chatmode.md
+65245062f0c6724549e8beadbc83cdfe9a142e1db2600daca5e775a21b4cd53f  Template/.github/chatmodes/sre.chatmode.md
+d7c786d287843cff2b1ac5cf2eacd6a01f1728501898893b9d92e7baf9deb6e3  Template/.github/chatmodes/support.chatmode.md
+e51b5d246d0333596c4f19a9efe32b857510db9698a6dfc4a928e280018cb509  Template/.github/chatmodes/ux-researcher.chatmode.md
+86129cd7de88c0483c76096c76c317f37edff64aff98d02f7edda75c010f372a  Template/.github/chatmodes/validator.chatmode.md
+1d28cfc02f08199320fb65816b692de384d9f4f852f28b311583e599a2d2b3a5  Template/.github/copilot-instructions.md
+0a8f628806eee334839815dc268f8c8daa8398ee8478bd18847ea1c8df250bf2  Template/.github/instructions/general.instructions.md
+b11237fa830633cc1f2fa62c7a07a020bbd01cc2293bb81abe1c64c2f55b34ab  Template/.github/instructions/security.instructions.md
+8a40dd9e22e0957e6c0638b828689047ff73f7d6be1f6f674890aba9739405b3  Template/.github/prompts/handoff.prompt.md
+7d16f9dd9ec407d9dce1699fdf18664e161294681ec87363e8bdc5af319cdf2d  Template/.github/prompts/health-check.prompt.md
+36bb1680e9353d87bf4126df46a4b9ff40a9697760a29c0bcbe9fd7fc1993659  Template/.github/prompts/kickoff.prompt.md
+2d126f6c44d5262b9988ab2ada7f513afb32791725318c56a217ab17430b5307  Template/.github/prompts/migrate-existing.prompt.md
+87412c0ece050793b3e3d83b6d5fc4f8c8ac06772b3e4d3655f2d504bed6a0b4  Template/.github/prompts/phase-gate.prompt.md
+ad92756baffa6fe601e83d9941d64fb095cfd8044929d6d7a1e18e6d04a8a970  Template/.github/prompts/profile.prompt.md
+8adee163bccd5d77e9301a7c32cb89a4b3514a08fe6d724936a72267e46658ac  Template/.github/prompts/recover.prompt.md
+986785cae49225cbc234f00353f69f968dd43126cae7089d52a60b48ec8b19bf  Template/.github/prompts/validate.prompt.md
+5087aece6dc642306b711d25efa634b6600deddee57bb5285f26c13d67682109  Template/.vscode/mcp.json
+f51fb04784ca27055eb0bbd1e9a8942067e70ad80cf4b46adc70a7d4d8bb7d80  Template/AGENTS.md
+f9e3991e7ac1d413455b8b01c066737562d1781cd53dd5b00a380840f63cce01  tests/2026-05-26-stage1-validation-poc.md
+````
+
+## IL-006: post-Stage-1-closeout housekeeping scan (verdict healthy)
+
+- Date: 2026-05-26T19:45:00Z
+- Trigger: housekeeping; close staleness warning after commits a16676b (POC: close downstream worked-example open item), d497fda (tests: add kickoff worked-example record), 71e8722 (POC: close cross-links open item; mark Stage 2 deferred)
+- git_head: 71e87228a395b0fd9a6b2187f9203df48e617135
+- files_scanned: 125
+- sha256_baseline: 8fe7d4f2e5a396748370075c0ed7e9acde434ae801a63e6f34bfaf4ed90a2d34
+- Check 7  (git fsck):       pass - clean
+- Check 8  (hash readback):  pass - per-file SHA-256 + manifest baseline derived deterministically from git ls-files
+- Check 9  (cross-ref):      pass - manual spot-check of the 3 files modified since IL-005 (tests/2026-05-26-stage1-validation-poc.md edited; tests/2026-05-26-kickoff-worked-example.md added; no new IDs introduced)
+- Check 10 (encoding audit): pass - BOM=0, ESC=0 across tracked .md/.json/.yml files
+- Check 11 (remote sync):    pass - local HEAD 71e87228a395b0fd9a6b2187f9203df48e617135 equals origin/master 71e87228a395b0fd9a6b2187f9203df48e617135
+- Verdict: healthy
+- Notes: Routine housekeeping scan closing the Stage-1 cross-links and worked-example open items. Manifest grew by 2 files vs IL-005 (123->125): tests/2026-05-26-kickoff-worked-example.md added; tests/2026-05-26-stage1-validation-poc.md edited in place; .agents/state/integrity-log.md will change once this entry is committed (next IL must re-baseline).
+- turn_token: 6
+
+### IL-006 hash manifest
+
+````
+53aca49b7dd43427e48af6192a7c5d32a932570358638f5e3381615a446bf1a8  .agents/state/integrity-log.md
+2ad9a99a058d1e9e5a9c9d72668b5089be1a6f9113561657d687567e3e5ca0fe  .gitignore
+5fe8e3913d8138c23cd5b60adef2da71be7d46e4bf64a3779d03c7bfd64fe96e  Design/SYSTEM-DESIGN.md
+ad5c5673be95ebdb9cd63f90197d48f93128ebcc9c59fb0ecc0d5c238c6fc136  Libraries/_prior-art/agents-md.md
+30904959aa006f71263fe3da6911f86eb4c3b153d4d6ec6d71da7be05bcd66eb  Libraries/_prior-art/anthropic-patterns.md
+c7ce5f9f25df8f26135b842b1119893959b9dc62d30df610ee61d2bda3ad982b  Libraries/_prior-art/bmad-method.md
+1f7c888ec3345b15f6d1257a5c9846ef541f1ca67e669c01111fff8a151a2074  Libraries/_prior-art/compound-engineering.md
+c88ed07e41cfec1cf47bb46fefb7464e73c570b06868cbe779a12d77e5b365eb  Libraries/_prior-art/frameworks-survey.md
+604ca14944964e306ff99a91bd0c36454a98215bd22a3afa2f8cbc895e788870  Libraries/_prior-art/mcp.md
+779a1f16bba7d7b037e0c727659d2f8af95f9644cc0e6bef2d3425344357da44  Libraries/_prior-art/README.md
+a109a56550cefc9cade3523b5c9dbfa0e20a0cc273ed7bf189e5aeafddb0e159  Libraries/_prior-art/spec-kit.md
+9c70d1c643df72599727ec7d07830ae5a0c3f2bdb6ebfff6d5a2f84bf72d3346  Libraries/_prior-art/vscode-customization.md
+d6029395c33098cc3623d5c7c193b1b9ef3dff2a8c41bb12ef679d7083fd2729  Libraries/_schema/conventions.md
+a06130db7be149e133e8b0800964dfc990b60dce5cffdfa945c17a18329c5e25  Libraries/_schema/entry-schema.md
+ee9d8a8b370504c11ca415b0a5116f4756f5dfd2d4fc35913283aa2116901135  Libraries/core/agents-md.md
+20c328434cd7adbcb8efb714c109b6c7d7eab58eb0f068e25941c698e746b309  Libraries/core/compaction-and-recovery.md
+411fa44753082da3a6090b3e6da1179d4f0117e0a110162b2ba231a044e7fe5a  Libraries/core/mcp.md
+aab4322e58385a48835c7b6aa5128f0b7c6d7c756463481c28089f094b785803  Libraries/core/multi-agent-patterns.md
+f76359022615586485294b653b7c12a884fe3440fc8d53faad8fc81f8b958256  Libraries/core/state-and-handoffs.md
+b9f95c16937e25cf858e3a069c6979c28d6001125f612d9d71c6da884d203d40  Libraries/core/validation-and-recovery.md
+d0ff3e2014c5cb19fd373fe9172a4efa18d760385986a13f268c05f64af4af9f  Libraries/core/vscode-chat-modes.md
+ce981626566c3fa6534cd0ec94bfc6bdfea6aca071f50b473f997cf0beb679a6  Libraries/frameworks/anthropic-subagents.md
+84716b3fcc8892e0b57e874245be5b6ccd6e88910d0673afb412677513373df5  Libraries/frameworks/autogen.md
+612407c438c429c7bf6f39798caceffc968580b566bbc2889185963e0455a784  Libraries/frameworks/crewai.md
+3fe509533c01a764a5684b789a966697a73b92524bafe87c00318dbf05171c09  Libraries/frameworks/langgraph.md
+8dd56ac23da58be1dd49e9fb74bac49f544d2d3e43e1871e1eaaf9261cd0c4d3  Libraries/frameworks/microsoft-agent-framework.md
+4c4c756025c0269fef35e80d55c047fe8c270fc7a501f144697faadf962a5dcc  Libraries/frameworks/openai-agents-sdk.md
+cf13c7aabf5e5a68e113edf5b0cf7c3a668b225d604f52d0075ec90e31e253d5  Libraries/frameworks/semantic-kernel.md
+7c44302c427203017fa010f12ff48de18f72845185f3fc6e8e6d2ebaf2ee2f20  Libraries/governance/nist-ai-rmf.md
+d44ed5c68c9d2bbd4d801b6c991a50ce02f79819d053c1ae99aff03e1bde9835  Libraries/governance/owasp-llm-top10.md
+ee6fd7f20cfaecf62be9e2cadf14ded84850632bdf26792ea2b73792ee7bc120  Libraries/governance/prompt-injection-defenses.md
+2d89884b9195660276b4b38f5bf63eb0be1243326540e090b251b4d8398f433e  Libraries/governance/responsible-ai-principles.md
+4bc95e03036090e8a275a7b144c1123839cbfae75467014d1c1bc110f66c0da2  Libraries/microsoft/agents/azure-ai-foundry.md
+fc0f1d7dd55b387931eb9abfd6af71b4e22b20e2a8ccea98e14b03cfc9d408da  Libraries/microsoft/agents/copilot-studio.md
+6c4ab039dd7e54de6a0cd467af23fa8bd3a65f3802726584045aaaeeb34357ee  Libraries/microsoft/agents/foundry-agent-service.md
+1d450f3188be54a61df1cf44515dc0e243ded6ab65860eae712095ff88c14582  Libraries/microsoft/architecture/aks.md
+ec081999bdb2d3c05bb02702b47c01c07cb78f4fccf0a99e13bc9dff80cb177a  Libraries/microsoft/architecture/app-service.md
+cb48650d38d5bc62f9d612b0d8b5e7f5c86cfb44dbd58080f0a6748639de7d56  Libraries/microsoft/architecture/application-insights.md
+2efc6ccc2091d836fb4baddd1112fdc99b3c30b6ad0900acf17b157a758d6400  Libraries/microsoft/architecture/avm.md
+1d277952a107adae2f5756ab5c619bf1151fddf49643f371604152cd5659be8c  Libraries/microsoft/architecture/azure-architecture-center.md
+c95fa7c1b75eb0ecb38a40f04abdbbe5db9992d05f8412034d90c440a53b5127  Libraries/microsoft/architecture/azure-landing-zones.md
+e2a792ae53c7971d6bda8e66e6e6a018f61591698928042858bd2b1c053c4de5  Libraries/microsoft/architecture/azure-sql-best-practices.md
+5f5a05ac67f1150ec36241d27ab00313d405eee7b1f7bcb5e6343c79b47c7acb  Libraries/microsoft/architecture/caf.md
+abcf506ca37221b0483277509cfa556c15741beeb45a1640663a10967d26b440  Libraries/microsoft/architecture/cosmos-db.md
+9f17ae52ed5f97013293098445fa129f1dfa7c38d8659ddca0dd4c747731c030  Libraries/microsoft/architecture/log-analytics.md
+11f4aeeef61ae0c77c4dffc15ec9350349c1a832f10ab112cee48db1d07a28b9  Libraries/microsoft/architecture/postgres-flex.md
+156b922fa49eb625a2b43e9e5e5cd87b4f703626e03d4393d3304a1132bfbd45  Libraries/microsoft/architecture/service-bus.md
+4f55b6b9664e491f41e9f137f8f9ba99697fc1e26f31ec2f58bb858abd0a9aac  Libraries/microsoft/architecture/waf.md
+ecbab902ec2fc589c1a601763628d13db8c9dc0391b10b4ceacc546f25cd575a  Libraries/microsoft/build/azure-devops.md
+35f9e5a8dc9654fb8f1afd31abc95bd3a78fedd2b7f85ab84888f8ff0ef25a82  Libraries/microsoft/build/azure-pipelines.md
+467ab04cfca122fa45fc29156920d2e8f98e6e8c7c9af31bdb732458a06161be  Libraries/microsoft/build/bicep.md
+b5ee14d6ad5a5bdff15fc9d5d48deb1fdda9a5b30c756857a3aa90ffcbcb018b  Libraries/microsoft/build/gh-actions.md
+a266793548300b34a4fb2d6abd95d2ee48421fceaf169fc65ab785b356bce728  Libraries/microsoft/build/gh-advanced-security.md
+4673c3eba3411dd13c947dbe595b057606b6316589b9717e3cd4de03095b4507  Libraries/microsoft/docs/ms-learn.md
+ced041844bc7b735e4cac0e6e6dae853a686de0502ea28be980f2be4a2b5a124  Libraries/microsoft/docs/ms-style-guide.md
+1ef11abb8cf7157c06c4ff928bacfc08183f408b36176f061e0db3292a3dc17a  Libraries/microsoft/governance/ai-red-teaming.md
+32489e76be6e3eae42b752a0a7f4bf4288f91c8c153659adea7994258d8da847  Libraries/microsoft/governance/ms-accessibility.md
+c1815ec4782205ccd61bc584faa1c0348d0666157ee47fc15bb833fc89d107e6  Libraries/microsoft/governance/ms-oss-policy.md
+2724b153cc3c499e36188f80727cdd771414c9359973f97893c80afbbf7faefa  Libraries/microsoft/governance/ms-privacy-standard.md
+fef2031d5d39317d211ed53c7f971113c886d757572c6f6e1c20388b453901d0  Libraries/microsoft/governance/ms-rai-standard.md
+d01382576df4081df3a81582577ac4ed738c006094e60b4e4ae3f64887f5c509  Libraries/microsoft/governance/rai-toolbox.md
+99310ccf918a37232b7583359c099652c341970a8710ef836caf1dfc1d2590fa  Libraries/microsoft/README.md
+250ff241c11ee326cbc1ca90904e91c4d5ae48866d71d413439c593fb0f92490  Libraries/microsoft/security/defender-for-cloud.md
+e7b5f15d745aa2b2c8589e484e262e8e3e8468be7310f4d94d312640445a3697  Libraries/microsoft/security/entra-id.md
+7bac7fead703c0ee72ba4558318463302dcd6eb2098211f215e690eddf968a4f  Libraries/microsoft/security/key-vault.md
+6193c5715ceeaeea267818a4b17ec39373af0a115ea780a1210f25be71ebf1f0  Libraries/microsoft/security/managed-identity.md
+5b3d0f21c3c76ac1aa7c5d1f8ab714bf1d95c40f27d57a0d19d5e0b4e791401b  Libraries/microsoft/security/mcsb.md
+93725de97ce09b09011262cf7a730da2c9688b0b5fe477fe6bf052ab1b7ad3a6  Libraries/microsoft/security/sdl.md
+8dc69692d699d18256c54ace2265b596308de3c5c2b2b0cd48e90c4902d1e74e  Libraries/microsoft/security/sfi.md
+b47717ad2927ea7239023b5d4ef1af5932bf0d2de5abc950f6caa09ba5c3307c  Libraries/microsoft/security/zero-trust.md
+11417ff024bf1f2313788494e1b50464970a13c1780ef939d1f6e6836a2b83e3  Libraries/README.md
+9ae177a9e7858118f6294b12633f65959f4964b5290d80c79843ce106f0aed3a  Libraries/tools/_template/index.template.md
+c753500a775b7d64df34838348f791abfd1a3caf92a7083c08377b8b977fd159  Libraries/tools/multi-agent-system/index.md
+69e7b37e2ebdaf8fc313bf6cb74882fed65895e5f853736e65759bafb333bc6b  Multi-Agent-System.code-workspace
+9358295c66c06b84f57698e7bb0b155c58d692b4c1f9a51cc0afd5def478d512  README.md
+d08c8c21b483b80d38d2118b337c273beb7fa1beba7caa9f0686339034f4bba9  Setup/CHECKLIST.md
+abe2098926db1070d620ac550b2e61c3ada76c54455a1d8f6aee8ca9c80b82fc  Setup/SETUP.md
+7aa3d55273e4ed2c6b3b16023b2346657c24dcd628e6add86bff47113cf05c8e  Template/.agents/state/artifact-manifest.template.md
+6bea3e6ada6e4ffdf520c97a17ca4f58f023be881f3df644ac70c9eb28293543  Template/.agents/state/artifacts.template.md
+075c964e4c6c63303b2289f058b38300763cff2efe255f01628bd34c5566ead9  Template/.agents/state/checkpoint.template.md
+c928cb95c8e792e76f8290c8d028e84a83c9437c605c2c06b024a6d84608630b  Template/.agents/state/decisions.template.md
+81b2a9182488560dafd054113f5deb2b6b30d86a4edc5dd2fcb0db6c93bf1150  Template/.agents/state/integrity-log.template.md
+a832fc5e79b02bf023b9e7b1ded7d1e237ef29b52c4b808b6db7172e613adf13  Template/.agents/state/plan.template.md
+31cb1ec175e412a4c6a77b077417bdc9622ccb25ef3c7467a82ee6f41ca9140c  Template/.agents/state/project-profile.template.md
+4d48c306f2b9cee06a05fd8799c018328e3d8dd130c51c7737def327285d5ae0  Template/.agents/state/README.md
+903da48cfe9c9b5df1198bd315617e6622a726c00577e488d200242176ac3703  Template/.agents/state/role-manifest.template.md
+2481ca3b1bdeb074e28625014bb0768d1486219ae922e52e8547a4c45502a192  Template/.agents/state/validation-log.template.md
+13abbd710d9ddb8e0ce3ee750e9328df316bb0e95455e7f123d4ebec664fd022  Template/.github/chatmodes/accessibility.chatmode.md
+855076677d5244d983886b7bbefd695f7b923f31c457c65f94276bb26b2bf7d3  Template/.github/chatmodes/architect.chatmode.md
+f0dbc673f1af43f1246e67ce0bf89d7a193fdef9e55b6662a1b891dbee43084c  Template/.github/chatmodes/builder.chatmode.md
+7d0756f1e319cdcf3647781954bf4523ca52d58d8aac8bf41edfd62c90d70879  Template/.github/chatmodes/compliance-officer.chatmode.md
+fcb0e0edecd85e270b71554f10eaa66b20b35da18fedd13e327a0af72ec11137  Template/.github/chatmodes/data-steward.chatmode.md
+3295f8f7d6d61538db1595ecac1455e8559a72d7172e27dabcbd03c19fe15125  Template/.github/chatmodes/database-engineer.chatmode.md
+3a6057481527b1c77bde857e6619e9aa35de2f9df8e0f898d9bbc2fc2daa2f18  Template/.github/chatmodes/documenter.chatmode.md
+2f317c2742583512845d60300a41ea7fde263b9df15e07fac0f2639570a35ec3  Template/.github/chatmodes/finops.chatmode.md
+7d5af101df5610dacf192a1ecc578c02b7cc7e3eecf089c7fa16f0f0eff580d3  Template/.github/chatmodes/legal.chatmode.md
+68e52aa5c48daa101924975e972586993dc217beeccbd4ca4272306eee283c61  Template/.github/chatmodes/librarian.chatmode.md
+c5a43bce73d774c298a4887c9f5901d91fd0e41ec5fad0e0b6dd6fcf8dd52a68  Template/.github/chatmodes/maintainer.chatmode.md
+05b6e401d08b3fc38f2ed20dcdea844288e5ab61ce2c84cc152d6e6de4863312  Template/.github/chatmodes/orchestrator.chatmode.md
+6b0f7749891dc353307012a3c85e9c7b197ed8dfd582bb08c4b65260f5b2ea81  Template/.github/chatmodes/privacy-engineer.chatmode.md
+7dec395baa29725e33d26a343f900e47ecc5fdfe303ba2ff0626fce3782e04a2  Template/.github/chatmodes/product.chatmode.md
+30dd495f4758714450656e0eb86b3ed7acb0634c6f3d94711f0d61f3a54b0983  Template/.github/chatmodes/qa.chatmode.md
+1de62957c629c0ff49c2180d9de9526690b28c06825755c713e789aa40ad4e14  Template/.github/chatmodes/rai.chatmode.md
+022d1b42420334399bcb14c13c70729883c4227bd259b18e6de95fe7aa672274  Template/.github/chatmodes/release-manager.chatmode.md
+4204ef971bcf31df6964c4789367bff8932c1a0ff2ccdbe80d78bf15e91ca663  Template/.github/chatmodes/reviewer.chatmode.md
+0dcf28a1cdb943c3cb951b131f8ed24a2d3c0349e377a0f0928276d43f302e46  Template/.github/chatmodes/security-engineer.chatmode.md
+65245062f0c6724549e8beadbc83cdfe9a142e1db2600daca5e775a21b4cd53f  Template/.github/chatmodes/sre.chatmode.md
+d7c786d287843cff2b1ac5cf2eacd6a01f1728501898893b9d92e7baf9deb6e3  Template/.github/chatmodes/support.chatmode.md
+e51b5d246d0333596c4f19a9efe32b857510db9698a6dfc4a928e280018cb509  Template/.github/chatmodes/ux-researcher.chatmode.md
+86129cd7de88c0483c76096c76c317f37edff64aff98d02f7edda75c010f372a  Template/.github/chatmodes/validator.chatmode.md
+1d28cfc02f08199320fb65816b692de384d9f4f852f28b311583e599a2d2b3a5  Template/.github/copilot-instructions.md
+0a8f628806eee334839815dc268f8c8daa8398ee8478bd18847ea1c8df250bf2  Template/.github/instructions/general.instructions.md
+b11237fa830633cc1f2fa62c7a07a020bbd01cc2293bb81abe1c64c2f55b34ab  Template/.github/instructions/security.instructions.md
+8a40dd9e22e0957e6c0638b828689047ff73f7d6be1f6f674890aba9739405b3  Template/.github/prompts/handoff.prompt.md
+7d16f9dd9ec407d9dce1699fdf18664e161294681ec87363e8bdc5af319cdf2d  Template/.github/prompts/health-check.prompt.md
+36bb1680e9353d87bf4126df46a4b9ff40a9697760a29c0bcbe9fd7fc1993659  Template/.github/prompts/kickoff.prompt.md
+2d126f6c44d5262b9988ab2ada7f513afb32791725318c56a217ab17430b5307  Template/.github/prompts/migrate-existing.prompt.md
+87412c0ece050793b3e3d83b6d5fc4f8c8ac06772b3e4d3655f2d504bed6a0b4  Template/.github/prompts/phase-gate.prompt.md
+ad92756baffa6fe601e83d9941d64fb095cfd8044929d6d7a1e18e6d04a8a970  Template/.github/prompts/profile.prompt.md
+8adee163bccd5d77e9301a7c32cb89a4b3514a08fe6d724936a72267e46658ac  Template/.github/prompts/recover.prompt.md
+986785cae49225cbc234f00353f69f968dd43126cae7089d52a60b48ec8b19bf  Template/.github/prompts/validate.prompt.md
+5087aece6dc642306b711d25efa634b6600deddee57bb5285f26c13d67682109  Template/.vscode/mcp.json
+f51fb04784ca27055eb0bbd1e9a8942067e70ad80cf4b46adc70a7d4d8bb7d80  Template/AGENTS.md
+2ba1acad9fcdb646a48748c511f6b109d6717e37facb101b4e1bb86f7ff5d787  tests/2026-05-26-kickoff-worked-example.md
+f100665dcc0c292c4b0a18eb93ab7025e6f9c4771a125ee66909c54ab3225bef  tests/2026-05-26-stage1-validation-poc.md
+````

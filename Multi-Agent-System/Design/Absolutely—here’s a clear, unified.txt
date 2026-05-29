@@ -1,0 +1,56 @@
+Absolutely—here’s a clear, unified mapping that ties every protocol requirement (from your 1–20 table) to a specific leg or sub-leg in the expanded MAS adoption plan. This ensures nothing is missed, and you can see exactly where each requirement will be integrated.
+
+---
+
+## 1. Protocol Requirement → Leg/Sub-Leg Mapping Table
+
+| # | Protocol Requirement (from your 1–20 list) | Leg/Sub-Leg in Plan | Notes |
+|---|--------------------------------------------|---------------------|-------|
+| 1 | COMPACTION STATUS (position-0, every turn) | 2B                  | Strict output order, always first |
+| 2 | BUDGET HEADROOM callout                    | 2C                  | Output, triggers, enum, position-1 |
+| 3 | DEGRADATION SIGNAL callout                 | 2D                  | Output, triggers, position-2, continuity log |
+| 4 | PAUSE marker (basic)                       | 3A                  | Canonical template, all triggers |
+| 5 | PAUSE marker (domain-labeled, full)        | 3A                  | Domain detection, field order, pause reason |
+| 6 | MODEL_CHANGE_REQUIRED callout              | 3B                  | Full block, rationale, operator action |
+| 7 | Model Class Tier Enum & Catalog            | 3C                  | Enum, catalog, detection, recommendation logic |
+| 8 | Task-Aware Model Recommendation            | 3C                  | Task assessment, output, PAUSE/plan inclusion |
+| 9 | Run Plan: Scope Sizing & Leg Granularity   | 3E                  | Plan gen, scope sizing, per-leg budget, state |
+| 10| Plan Presentation Protocol                 | 3D                  | Pre-exec gate, scope, compliance, model rec, checklist, naming, storage |
+| 11| Next-Steps & Gate Format                   | 3D, 3A              | Next-steps block, safe-harbor, auth gate, resume triggers |
+| 12| Mechanism 2 Durability Matrix              | 6                   | Explicit checklist, state persistence for all rows |
+| 13| DEG-11/12/13 Compliance                    | 2B, 2C, 2D          | Output order, violation detection |
+| 14| Plan/Leg Naming, Progress Checklist        | 3D, 3E              | Hierarchical IDs, checklist output |
+| 15| Continuity/Degradation/Compaction Logs     | 2D, 3E, 6           | Append-only logs for compaction, degradation, findings |
+| 16| Authorization Gate Format                  | 3D, 3A              | Table output, per-option model rec, active model |
+| 17| Resume Protocol/Triggers                   | 3A, 3D              | Resume command output, session bootstrap |
+| 18| Operator Sovereignty/Override              | 3A, 3D, 3B          | Advisory vs required, override logic |
+| 19| Safe-Harbor Advisory                       | 3D, 3A              | Output, triggers, rationale |
+| 20| State Persistence (append-only, per-leg)   | 3E, 6               | completed_legs[], next_leg_index, last_pause_reason, open_stop_findings, operator_actions_required |
+
+---
+
+## 2. Expanded Leg Plan (with Protocol Mapping)
+
+| Leg/Sub-Leg | Description | Protocol #s Covered |
+|-------------|-------------|---------------------|
+| 1           | Analyze MAS state, logs, and hooks. Map protocol requirements to existing artifacts. Identify any true gaps. | — |
+| 2A          | Integrate heartbeat/idempotence precheck into sessionStart.ps1. Use mas-session-resume and checkpoint.md for continuity. | — |
+| 2B          | Integrate strict COMPACTION STATUS output (position-0, every turn, no preamble). | 1, 13 |
+| 2C          | Integrate BUDGET HEADROOM callout (output, triggers, enum, position-1). | 2, 13 |
+| 2D          | Integrate DEGRADATION SIGNAL callout (output, triggers, position-2, continuity log). | 3, 13, 15 |
+| 3A          | Integrate canonical PAUSE marker (full template, domain label, all triggers, pause reason, field order, resume triggers, operator sovereignty/override, next-steps block, safe-harbor). | 4, 5, 11, 16, 17, 18, 19 |
+| 3B          | Integrate MODEL_CHANGE_REQUIRED callout (full block, rationale, operator action, PAUSE marker inclusion). | 6, 18 |
+| 3C          | Integrate Model Class Tier Enum & Catalog, and task-aware model recommendation protocol. | 7, 8 |
+| 3D          | Integrate plan presentation protocol (pre-exec gate, scope statement, compliance check, model rec, DEG-14, go-ahead ask, checklist, naming, storage, next-steps, safe-harbor, authorization gate). | 10, 11, 14, 16, 17, 18, 19 |
+| 3E          | Integrate run plan generation, scope sizing, leg granularity, per-leg budget, and state persistence (run-plan.json, run-state.json, continuity logs). | 9, 14, 15, 20 |
+| 4           | Integrate compaction detection and STOP-THE-LINE logic into sessionStart.ps1. Log events in checkpoint.md and integrity-log.md. | — |
+| 5           | Ensure all operator prompts, leg plans, and decisions are logged verbatim in decisions.md and review-log.md. | — |
+| 6           | Validate append-only, hash-verified state for all session artifacts. Extend checkpoint.md if needed. (Mechanism 2 Durability Matrix) | 12, 15, 20 |
+| 7           | Audit and test session start/resume, compaction, and recovery flows for protocol compliance. | — |
+| 8           | Document all changes and improvements in the adoption log. | — |
+
+---
+
+**This mapping ensures every protocol requirement is assigned to a specific leg or sub-leg, with no gaps or ambiguity.**
+
+Would you like to proceed with Leg 2B (strict COMPACTION STATUS output), or review/adjust the mapping further?

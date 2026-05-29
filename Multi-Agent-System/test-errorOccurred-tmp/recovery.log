@@ -1,0 +1,3 @@
+{"action":"Recovery initiated","timestamp":"2026-05-27T08:21:15.1137250-04:00","errorContext":"Test error context","file":"state.json","errorId":"043b9652-e813-4def-bce4-2e14cc23a718","event":"errorOccurred"}
+{"action":"Recovery initiated","timestamp":"2026-05-27T08:21:15.8672836-04:00","errorContext":"Test error context","file":"state.json","errorId":"5fcc9aba-a68d-4a33-9507-da27d9720100","event":"errorOccurred"}
+{"action":"Recovery initiated","timestamp":"2026-05-27T08:21:16.5607998-04:00","errorContext":"Test error context","file":"state.json","errorId":"4e510184-2088-4d0e-bb89-795d7d7ac26d","event":"errorOccurred"}
